@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".DevBrowserApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.DevBrowser">
+
+        <activity
+            android:name=".ui.BrowserActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout|uiMode"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.SettingsActivity" android:label="@string/settings" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".ui.ProxyActivity" android:label="@string/proxy_and_tor" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".ui.ExtensionsActivity" android:label="@string/extensions" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".tools.SourceEditorActivity" android:label="@string/source_editor" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".tools.CookieEditorActivity" android:label="@string/cookie_editor" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".tools.ConsoleActivity" android:label="@string/js_console" android:theme="@style/Theme.DevBrowser.Sub" />
+        <activity android:name=".tools.NetworkLogActivity" android:label="@string/network_log" android:theme="@style/Theme.DevBrowser.Sub" />
+    </application>
+</manifest>

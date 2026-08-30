@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gx_bg"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <ScrollView
+        android:id="@+id/outputScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_editor"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/output"
+            style="@style/GxMono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true" />
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+
+        <EditText
+            android:id="@+id/input"
+            style="@style/GxMono"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_editor"
+            android:hint="JavaScript expression"
+            android:importantForAutofill="no"
+            android:inputType="text|textNoSuggestions"
+            android:padding="10dp"
+            android:textColorHint="@color/gx_text_dim" />
+
+        <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+        <Button android:id="@+id/btnRun" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="@string/run"
+            android:background="@drawable/bg_accent_button" android:textColor="@color/gx_text" />
+    </LinearLayout>
+</LinearLayout>

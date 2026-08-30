@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- OperaGX inspired palette: near-black surfaces with a hot red accent -->
+    <color name="gx_bg">#FF0B0B0F</color>
+    <color name="gx_surface">#FF14141C</color>
+    <color name="gx_surface_high">#FF1D1D28</color>
+    <color name="gx_stroke">#FF2A2A38</color>
+    <color name="gx_accent">#FFFF1B4B</color>
+    <color name="gx_accent_dim">#66FF1B4B</color>
+    <color name="gx_accent_alt">#FF00E5FF</color>
+    <color name="gx_text">#FFF2F2F7</color>
+    <color name="gx_text_dim">#FF9A9AB0</color>
+    <color name="gx_green">#FF35E07E</color>
+    <color name="gx_purple">#FF9B5CFF</color>
+    <color name="gx_warn">#FFFFB020</color>
+</resources>

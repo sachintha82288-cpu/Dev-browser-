@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.DevBrowser" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/gx_accent</item>
+        <item name="colorOnPrimary">@color/gx_text</item>
+        <item name="colorSecondary">@color/gx_accent_alt</item>
+        <item name="colorSurface">@color/gx_surface</item>
+        <item name="colorOnSurface">@color/gx_text</item>
+        <item name="android:colorBackground">@color/gx_bg</item>
+        <item name="android:statusBarColor">@color/gx_bg</item>
+        <item name="android:navigationBarColor">@color/gx_surface</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:textColorPrimary">@color/gx_text</item>
+        <item name="android:textColorSecondary">@color/gx_text_dim</item>
+        <item name="materialAlertDialogTheme">@style/Theme.DevBrowser.Dialog</item>
+    </style>
+
+    <!-- Sub screens keep an action bar so the up-button works. -->
+    <style name="Theme.DevBrowser.Sub" parent="Theme.Material3.Dark">
+        <item name="colorPrimary">@color/gx_accent</item>
+        <item name="colorSurface">@color/gx_surface</item>
+        <item name="android:colorBackground">@color/gx_bg</item>
+        <item name="android:statusBarColor">@color/gx_bg</item>
+        <item name="materialAlertDialogTheme">@style/Theme.DevBrowser.Dialog</item>
+    </style>
+
+    <style name="Theme.DevBrowser.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/gx_surface_high</item>
+        <item name="colorPrimary">@color/gx_accent</item>
+    </style>
+
+    <style name="GxToolButton">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:background">@drawable/bg_tool_button</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:tint">@color/gx_text</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="GxMono">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColor">@color/gx_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+</resources>

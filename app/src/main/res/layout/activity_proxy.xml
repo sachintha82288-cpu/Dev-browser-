@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gx_bg"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Connection mode" android:textColor="@color/gx_accent"
+            android:textStyle="bold" android:paddingBottom="6dp" />
+
+        <RadioGroup android:id="@+id/modeGroup" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <RadioButton android:id="@+id/modeNone" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Direct (no proxy)" />
+            <RadioButton android:id="@+id/modeTor" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Tor via Orbot (SOCKS5 127.0.0.1:9050)" />
+            <RadioButton android:id="@+id/modeManual" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Manual proxy" />
+        </RadioGroup>
+
+        <TextView android:id="@+id/torStatus" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:paddingVertical="8dp"
+            android:textColor="@color/gx_text_dim" android:textSize="12sp" />
+
+        <Button android:id="@+id/btnStartOrbot" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Start Orbot"
+            android:background="@drawable/bg_tool_button" android:textColor="@color/gx_text" />
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:layout_marginVertical="14dp" android:background="@color/gx_stroke" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Manual proxy settings" android:textColor="@color/gx_accent"
+            android:textStyle="bold" android:paddingBottom="6dp" />
+
+        <RadioGroup android:id="@+id/typeGroup" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/typeSocks" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="SOCKS5" />
+            <RadioButton android:id="@+id/typeHttp" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_marginStart="16dp"
+                android:text="HTTP" />
+        </RadioGroup>
+
+        <EditText android:id="@+id/proxyHost" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="host"
+            android:importantForAutofill="no" android:inputType="text" />
+        <EditText android:id="@+id/proxyPort" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="port"
+            android:importantForAutofill="no" android:inputType="number" />
+        <CheckBox android:id="@+id/proxyDns" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resolve DNS through proxy (no leaks)" />
+
+        <Button android:id="@+id/btnApply" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            android:text="@string/apply" android:background="@drawable/bg_accent_button"
+            android:textColor="@color/gx_text" />
+
+        <Button android:id="@+id/btnTest" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="Check my IP / Tor status" android:background="@drawable/bg_tool_button"
+            android:textColor="@color/gx_text" />
+    </LinearLayout>
+</ScrollView>

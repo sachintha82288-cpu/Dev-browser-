@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "DevBrowser Tools",
+  "version": "1.0.0",
+  "description": "Built-in bridge that gives DevBrowser its source viewer, cookie editor and JS console.",
+  "applications": {
+    "gecko": {
+      "id": "devtools@devbrowser.app"
+    }
+  },
+  "permissions": [
+    "<all_urls>",
+    "cookies",
+    "tabs",
+    "storage",
+    "webNavigation",
+    "webRequest",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}
