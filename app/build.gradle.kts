@@ -31,13 +31,16 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { viewBinding = true }
+    testOptions { unitTests.isReturnDefaultValues = true }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
 }
 
 dependencies {
     // GeckoView: the Firefox engine. Required for real WebExtension (Firefox add-on)
     // support and for engine level SOCKS/Tor proxy configuration.
-    implementation("org.mozilla.geckoview:geckoview:130.0.20240826075347")
+    // GeckoView versions carry a build timestamp (e.g. 130.0.20240829091144),
+    // so a dynamic version is used to resolve the latest 130.x at build time.
+    implementation("org.mozilla.geckoview:geckoview:130.+")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")

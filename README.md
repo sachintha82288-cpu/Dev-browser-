@@ -80,6 +80,20 @@ app/src/main/
     └── ui/                     BrowserActivity, settings, proxy, extensions screens
 ```
 
+## Tests
+
+Unit tests cover the two pure-logic components — address-bar parsing
+(`UrlUtilsTest`) and the HTML pretty printer (`HtmlFormatterTest`):
+
+```bash
+./gradlew :app:testDebugUnitTest
+```
+
+The formatter tests specifically guard against re-indenting `<script>`,
+`<style>`, `<pre>` and `<textarea>` bodies. Doing so corrupts JavaScript
+(template literals and `a < b` comparisons), and since the source editor writes
+its output back into the live page, that would break real sites.
+
 ## Building
 
 Requires JDK 17 and the Android SDK (compileSdk 34, minSdk 24).

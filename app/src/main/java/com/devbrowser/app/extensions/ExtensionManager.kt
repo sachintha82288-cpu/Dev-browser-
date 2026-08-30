@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.devbrowser.app.browser.GeckoEngine
+import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.WebExtension
 import org.mozilla.geckoview.WebExtensionController
@@ -110,5 +111,3 @@ object ExtensionManager {
             ): GeckoResult<AllowOrDeny> = GeckoResult.fromValue(AllowOrDeny.ALLOW)
         }
 }
-
-typealias AllowOrDeny = org.mozilla.geckoview.AllowOrDeny
