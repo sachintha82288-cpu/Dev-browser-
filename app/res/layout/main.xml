@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
+
+    <!-- ============ TOP TOOLBAR ============ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_toolbar"
+        android:elevation="6dp">
+
+        <!-- Address row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="6dp">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_globe"
+                android:contentDescription="@string/app_name"
+                android:padding="3dp" />
+
+            <EditText
+                android:id="@+id/address"
+                style="@style/AddressBar"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:hint="@string/address_hint" />
+
+            <ImageButton
+                android:id="@+id/actionGo"
+                style="@style/NavButton"
+                android:src="@drawable/ic_search"
+                android:contentDescription="@string/btn_go" />
+        </LinearLayout>
+
+        <!-- Nav + tabs row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="6dp">
+
+            <ImageButton
+                android:id="@+id/actionBack"
+                style="@style/NavButton"
+                android:src="@drawable/ic_back"
+                android:contentDescription="@string/nav_back" />
+
+            <ImageButton
+                android:id="@+id/actionForward"
+                style="@style/NavButton"
+                android:src="@drawable/ic_forward"
+                android:contentDescription="@string/nav_forward" />
+
+            <ImageButton
+                android:id="@+id/actionReload"
+                style="@style/NavButton"
+                android:src="@drawable/ic_reload"
+                android:contentDescription="@string/nav_reload" />
+
+            <ImageButton
+                android:id="@+id/actionHome"
+                style="@style/NavButton"
+                android:src="@drawable/ic_home"
+                android:contentDescription="@string/nav_home" />
+
+            <HorizontalScrollView
+                android:id="@+id/tabScroll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:scrollbars="none"
+                android:overScrollMode="never">
+
+                <LinearLayout
+                    android:id="@+id/tabsContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp" />
+            </HorizontalScrollView>
+
+            <ImageButton
+                android:id="@+id/actionNewTab"
+                style="@style/NavButton"
+                android:src="@drawable/ic_add"
+                android:contentDescription="@string/new_tab" />
+
+            <ImageButton
+                android:id="@+id/actionMenu"
+                style="@style/NavButton"
+                android:src="@drawable/ic_more_vert"
+                android:contentDescription="@string/more" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ============ WEB AREA ============ -->
+    <FrameLayout
+        android:id="@+id/webArea"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:id="@+id/viewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/emptyHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="@string/app_tagline"
+            android:textColor="@color/text_disabled"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <!-- ============ DEV CONSOLE ============ -->
+    <LinearLayout
+        android:id="@+id/consolePanel"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_console"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/console_title"
+                android:textColor="@color/neon_cyan"
+                android:textStyle="bold"
+                android:textSize="13sp" />
+
+            <ImageButton
+                android:id="@+id/consoleClear"
+                style="@style/NavButton"
+                android:src="@drawable/ic_close"
+                android:tint="@color/text_secondary"
+                android:contentDescription="@string/console_clear" />
+
+            <ImageButton
+                android:id="@+id/consoleClose"
+                style="@style/NavButton"
+                android:src="@drawable/ic_close"
+                android:contentDescription="@string/close" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/consoleScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/consoleLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textSize="11sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingExtra="2dp" />
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="6dp">
+
+            <EditText
+                android:id="@+id/consoleInput"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_disabled"
+                android:hint="@string/console_hint"
+                android:singleLine="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
+
+            <Button
+                android:id="@+id/consoleRun"
+                style="@style/PrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:text="@string/console_run"
+                android:textSize="12sp"
+                android:minWidth="64dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

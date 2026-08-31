@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette: dark gunmetal + neon pink / cyan / purple  (Opera GX inspired) -->
+    <color name="bg">#0D0D13</color>
+    <color name="bg_toolbar">#17171F</color>
+    <color name="bg_surface">#1E1E2A</color>
+    <color name="bg_surface_alt">#262637</color>
+    <color name="divider">#2E2E40</color>
+    <color name="text_primary">#F2F2F7</color>
+    <color name="text_secondary">#9A9AB0</color>
+    <color name="text_disabled">#55556A</color>
+    <color name="neon_pink">#FF3EA5</color>
+    <color name="neon_cyan">#00E7FF</color>
+    <color name="neon_purple">#8A5CFF</color>
+    <color name="neon_pink_dim">#5A2240</color>
+    <color name="neon_cyan_dim">#0F3D45</color>
+    <color name="accent">#FF3EA5</color>
+    <color name="warning">#FFB300</color>
+    <color name="success">#4CD97B</color>
+    <color name="danger">#FF5252</color>
+    <color name="incognito">#2A2140</color>
+    <color name="transparent">#00000000</color>
+    <color name="ic_launcher_background">#17171F</color>
+</resources>

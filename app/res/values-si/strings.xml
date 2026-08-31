@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevBrowser</string>
+    <string name="app_tagline">සංවර්ධක වෙබ් බ්‍රවුසරය</string>
+
+    <string name="ok">හරි</string>
+    <string name="cancel">අවලංගු</string>
+    <string name="save">සුරකින්න</string>
+    <string name="delete">මකන්න</string>
+    <string name="open">විවෘත කරන්න</string>
+    <string name="close">වසන්න</string>
+    <string name="more">තවත්</string>
+    <string name="search">සොයන්න</string>
+
+    <string name="nav_back">ආපසු</string>
+    <string name="nav_forward">ඉදිරියට</string>
+    <string name="nav_reload">නැවත පූරණය</string>
+    <string name="nav_stop">නවත්වන්න</string>
+    <string name="nav_home">මුල් පිටුව</string>
+    <string name="btn_go">යන්න</string>
+    <string name="address_hint">සොයන්න හෝ ලිපිනය ඇතුළත් කරන්න</string>
+    <string name="new_tab">නව පටිත්ත</string>
+    <string name="new_incognito_tab">නව පෞද්ගලික පටිත්ත</string>
+    <string name="close_tab">පටිත්ත වසන්න</string>
+
+    <string name="menu_bookmarks">පිටු සලකුණු</string>
+    <string name="menu_history">ඉතිහාසය</string>
+    <string name="menu_downloads">බාගැනීම්</string>
+    <string name="menu_settings">සැකසුම්</string>
+    <string name="menu_view_source">මූලාශ්‍රය බලන්න</string>
+    <string name="menu_console">කොන්සෝලය</string>
+    <string name="menu_screenshot">තිර පිටුව</string>
+    <string name="menu_share">බෙදාගන්න</string>
+    <string name="menu_add_bookmark">සලකුණු කරන්න</string>
+    <string name="menu_ua">පරිශීලක නියෝජිත</string>
+
+    <string name="console_title">සංවර්ධක කොන්සෝලය</string>
+    <string name="console_hint">JavaScript ධාවනය කරන්න…</string>
+    <string name="console_run">ධාවනය</string>
+    <string name="console_clear">හිස් කරන්න</string>
+    <string name="console_hidden">කොන්සෝලය සඟවා ඇත</string>
+
+    <string name="title_settings">සැකසුම්</string>
+    <string name="settings_proxy">ප්‍රොක්සි සහ Tor</string>
+    <string name="settings_proxy_enabled">ප්‍රොක්සි භාවිතා කරන්න</string>
+    <string name="settings_proxy_host">ප්‍රොක්සි සත්කාරක</string>
+    <string name="settings_proxy_port">ප්‍රොක්සි වරාය</string>
+    <string name="settings_use_tor">Tor සැකසුම (127.0.0.1:8118)</string>
+    <string name="settings_launch_orbot">Orbot දියත් කරන්න</string>
+    <string name="settings_orbot_missing">Orbot ස්ථාපනය කර නැත. F-Droid වෙතින් Orbot ස්ථාපනය කර නැවත සැකසුම් විවෘත කරන්න.</string>
+    <string name="settings_apply_proxy">ප්‍රොක්සි යොදන්න</string>
+    <string name="settings_clear_proxy">ප්‍රොක්සි අක්‍රිය කරන්න</string>
+    <string name="settings_proxy_state_on">ප්‍රොක්සි ක්‍රියාත්මකයි</string>
+    <string name="settings_proxy_state_off">ප්‍රොක්සි අක්‍රියයි</string>
+    <string name="settings_proxy_best_effort">සටහන: ප්‍රොක්සිය මෙම යෙදුමේ WebView සඳහා යෙදේ. සියල්ල ප්‍රොක්සි කිරීමට VPN යෙදුමක් (උදා. Orbot) වඩාත් විශ්වාසදායකයි.</string>
+    <string name="settings_browser">බ්‍රවුසරය</string>
+    <string name="settings_homepage">මුල් පිටුව URL</string>
+    <string name="settings_default_ua">පෙරනිමි පරිශීලක නියෝජිත</string>
+    <string name="settings_ua_default">පෙරනිමිය (පද්ධතිය)</string>
+    <string name="settings_ua_desktop">ඩෙස්ක්ටොප් (Windows Chrome)</string>
+    <string name="settings_ua_android">Android (Chrome Mobile)</string>
+    <string name="settings_ua_custom">අභිරුචි</string>
+    <string name="settings_js_enabled">JavaScript</string>
+    <string name="settings_block_images">පින්තූර අවහිර කරන්න (දත්ත ඉතිරිය)</string>
+    <string name="settings_incognito_history">පෞද්ගලික ඉතිහාසය සුරකින්න එපා</string>
+    <string name="settings_clear_history">බ්‍රවුසිං ඉතිහාසය මකන්න</string>
+    <string name="settings_about">ගැන</string>
+    <string name="settings_version">අනුවාදය</string>
+
+    <string name="title_history">ඉතිහාසය</string>
+    <string name="title_bookmarks">පිටු සලකුණු</string>
+    <string name="history_empty">ඉතිහාසයක් නැත</string>
+    <string name="bookmarks_empty">පිටු සලකුණු නැත</string>
+    <string name="hint_bookmark_name">නම</string>
+    <string name="hint_bookmark_url">URL</string>
+
+    <string name="title_downloads">බාගැනීම්</string>
+    <string name="downloads_empty">බාගැනීම් නැත</string>
+    <string name="download_apk">ස්ථාපනය</string>
+    <string name="download_open">විවෘත</string>
+    <string name="download_install_permission_required">APK ස්ථාපනයට පද්ධති සැකසුම්වලින් “නොදන්නා යෙදුම්” අවසරය දෙන්න.</string>
+    <string name="download_started">බාගැනීම ආරම්භ විය</string>
+    <string name="download_failed">බාගැනීම අසාර්ථකයි</string>
+
+    <string name="title_view_source">මූලාශ්‍රය බලන්න</string>
+    <string name="source_loading">මූලාශ්‍රය පූරණය වෙමින්…</string>
+
+    <string name="ua_summary_android">Android UA</string>
+    <string name="ua_summary_desktop">ඩෙස්ක්ටොප් UA</string>
+    <string name="ua_summary_custom">අභිරුචි UA</string>
+
+    <string name="toast_bookmark_added">පිටු සලකුණු එකතු විය</string>
+    <string name="toast_bookmark_exists">දැනටමත් සලකුණු කර ඇත</string>
+    <string name="toast_page_title">පිටු මාතෘකාව</string>
+    <string name="toast_invalid_url">වැරදි URL</string>
+    <string name="toast_no_network">ජාලය නැත</string>
+    <string name="toast_screenshot_saved">තිර පිටුව සුරැකුණි</string>
+    <string name="toast_source_copied">මූලාශ්‍රය පිටපත් විය</string>
+    <string name="toast_restart_for_ua">නව පරිශීලක නියෝජිතය සඳහා පටිත්ත නැවත අරඹන්න.</string>
+<!-- v1.1: privacy + tooling -->
+    <string name="menu_network_log">ජාල ලොගය</string>
+    <string name="menu_inspect">මූලද්‍රව්‍ය පරීක්ෂණය</string>
+    <string name="menu_workspace">සංස්කාරකය</string>
+    <string name="title_network_log">ජාල ලොගය</string>
+    <string name="title_workspace">සංස්කාරකය</string>
+    <string name="settings_tor_socks">Tor SOCKS5 (Orbot)</string>
+    <string name="settings_socks_host">SOCKS සත්කාරක</string>
+    <string name="settings_socks_port">SOCKS වරාය</string>
+    <string name="settings_local_proxy">ඇතුළත ප්‍රොක්සි සේවාදායකය (Tor)</string>
+    <string name="settings_apply_local">Tor ප්‍රොක්සිය යොදන්න</string>
+    <string name="settings_stop_local">Tor ප්‍රොක්සිය අක්‍රිය කරන්න</string>
+    <string name="settings_privacy">රහස්‍යතාව</string>
+    <string name="settings_adblock">දැන්වීම් සහ ලුහුබැඳීම් අවහිර කරන්න</string>
+    <string name="settings_adblock_rules">අභිරුචි රීති (පේළියකට එකක්, ||domain^)</string>
+    <string name="settings_block_3p_cookies">තෙවන පාර්ශව කුකීස් අවහිර කරන්න</string>
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevBrowser</string>
+    <string name="app_tagline">Developer web browser</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="more">More</string>
+    <string name="search">Search</string>
+
+    <!-- Toolbar -->
+    <string name="nav_back">Back</string>
+    <string name="nav_forward">Forward</string>
+    <string name="nav_reload">Reload</string>
+    <string name="nav_stop">Stop</string>
+    <string name="nav_home">Home</string>
+    <string name="btn_go">Go</string>
+    <string name="address_hint">Search or enter address</string>
+    <string name="new_tab">New tab</string>
+    <string name="new_incognito_tab">New private tab</string>
+    <string name="close_tab">Close tab</string>
+
+    <!-- Menu -->
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_history">History</string>
+    <string name="menu_downloads">Downloads</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_view_source">View source</string>
+    <string name="menu_console">Console</string>
+    <string name="menu_screenshot">Screenshot</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_add_bookmark">Add bookmark</string>
+    <string name="menu_ua">User agent</string>
+
+    <!-- Dev console -->
+    <string name="console_title">Dev console</string>
+    <string name="console_hint">Evaluate JavaScript…</string>
+    <string name="console_run">Run</string>
+    <string name="console_clear">Clear</string>
+    <string name="console_hidden">Console hidden</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Settings</string>
+    <string name="settings_proxy">Proxy &amp; Tor</string>
+    <string name="settings_proxy_enabled">Use proxy</string>
+    <string name="settings_proxy_host">Proxy host</string>
+    <string name="settings_proxy_port">Proxy port</string>
+    <string name="settings_use_tor">Tor preset (127.0.0.1:8118)</string>
+    <string name="settings_launch_orbot">Launch Orbot</string>
+    <string name="settings_orbot_missing">Orbot is not installed. Install Orbot from F-Droid, then re-open settings.</string>
+    <string name="settings_apply_proxy">Apply proxy</string>
+    <string name="settings_clear_proxy">Disable proxy</string>
+    <string name="settings_proxy_state_on">Proxy active</string>
+    <string name="settings_proxy_state_off">Proxy inactive</string>
+    <string name="settings_proxy_best_effort">Note: proxy applies to the WebView of this app. A VPN app (e.g. Orbot) is the most reliable way to proxy everything.</string>
+    <string name="settings_browser">Browser</string>
+    <string name="settings_homepage">Homepage URL</string>
+    <string name="settings_default_ua">Default user agent</string>
+    <string name="settings_ua_default">Default (system)</string>
+    <string name="settings_ua_desktop">Desktop (Chrome on Windows)</string>
+    <string name="settings_ua_android">Android (Chrome Mobile)</string>
+    <string name="settings_ua_custom">Custom</string>
+    <string name="settings_js_enabled">JavaScript</string>
+    <string name="settings_block_images">Block images (data saving)</string>
+    <string name="settings_incognito_history">Never save private history</string>
+    <string name="settings_clear_history">Clear browsing history</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version</string>
+
+    <!-- History / bookmarks -->
+    <string name="title_history">History</string>
+    <string name="title_bookmarks">Bookmarks</string>
+    <string name="history_empty">No history yet</string>
+    <string name="bookmarks_empty">No bookmarks yet</string>
+    <string name="hint_bookmark_name">Name</string>
+    <string name="hint_bookmark_url">URL</string>
+
+    <!-- Downloads -->
+    <string name="title_downloads">Downloads</string>
+    <string name="downloads_empty">No downloads yet</string>
+    <string name="download_apk">Install</string>
+    <string name="download_open">Open</string>
+    <string name="download_install_permission_required">Allow “install unknown apps” in system settings to install APKs.</string>
+    <string name="download_started">Download started</string>
+    <string name="download_failed">Download failed</string>
+
+    <!-- View source -->
+    <string name="title_view_source">View source</string>
+    <string name="source_loading">Loading source…</string>
+
+    <!-- UA names -->
+    <string name="ua_summary_android">Android UA</string>
+    <string name="ua_summary_desktop">Desktop UA</string>
+    <string name="ua_summary_custom">Custom UA</string>
+
+    <!-- Toast -->
+    <string name="toast_bookmark_added">Bookmark added</string>
+    <string name="toast_bookmark_exists">Already bookmarked</string>
+    <string name="toast_page_title">Page title</string>
+    <string name="toast_invalid_url">Invalid URL</string>
+    <string name="toast_no_network">No network</string>
+    <string name="toast_screenshot_saved">Screenshot saved</string>
+    <string name="toast_source_copied">Source copied</string>
+    <string name="toast_restart_for_ua">Restart the tab for the new user agent.</string>
+<!-- v1.1: privacy + tooling -->
+    <string name="menu_network_log">Network log</string>
+    <string name="menu_inspect">Inspect element</string>
+    <string name="menu_workspace">Workspace</string>
+    <string name="title_network_log">Network log</string>
+    <string name="title_workspace">Workspace</string>
+    <string name="settings_tor_socks">Tor SOCKS5 (Orbot)</string>
+    <string name="settings_socks_host">SOCKS host</string>
+    <string name="settings_socks_port">SOCKS port</string>
+    <string name="settings_local_proxy">In-app proxy server (Tor)</string>
+    <string name="settings_apply_local">Apply Tor proxy</string>
+    <string name="settings_stop_local">Disable Tor proxy</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_adblock">Block ads &amp; trackers (host rules)</string>
+    <string name="settings_adblock_rules">Custom rules (one per line, ||domain^)</string>
+    <string name="settings_block_3p_cookies">Block third-party cookies</string>
+</resources>

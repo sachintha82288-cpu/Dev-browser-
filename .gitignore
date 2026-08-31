@@ -1,0 +1,21 @@
+# Build outputs
+app/build/
+build/
+*.apk
+*.apks
+*.aab
+
+# Signing + secrets
+tools/keystore/
+*.jks
+*.keystore
+
+# Editors / OS
+.idea/
+*.iml
+.DS_Store
+*.swp
+
+# Local toolchain cache
+tools/.cache/
+docs/media/.frames*
