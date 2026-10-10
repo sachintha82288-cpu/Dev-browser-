@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevBrowser</string>
+
+    <!-- Browser UI -->
+    <string name="search_hint">සොයන්න හෝ ලිපිනය ඇතුල් කරන්න</string>
+    <string name="menu">මෙනුව</string>
+    <string name="tabs">ටැබ්ස්</string>
+    <string name="new_tab">අලුත් ටැබ්</string>
+    <string name="new_private_tab">අලුත් පෞද්ගලික ටැබ්</string>
+    <string name="close_tab">ටැබ් වහන්න</string>
+    <string name="close_all_tabs">සියලු ටැබ්ස් වහන්න</string>
+    <string name="reload">නැවත පූරණය</string>
+    <string name="stop">නවත්වන්න</string>
+    <string name="forward">ඉදිරියට</string>
+    <string name="home">මුල් පිටුව</string>
+    <string name="back">ආපසු</string>
+    <string name="find_in_page">පිටුවේ සොයන්න</string>
+    <string name="find_next">ඊළඟ ගැලපුම</string>
+    <string name="find_previous">පෙර ගැලපුම</string>
+    <string name="match_case">අකුරු ගැලපුම</string>
+    <string name="desktop_site">ඩෙස්ක්ටොප් අඩවිය</string>
+    <string name="bookmarks">පොත් යොදන</string>
+    <string name="history">ඉතිහාසය</string>
+    <string name="add_bookmark">පිටුව පොත් යොදන්න</string>
+    <string name="remove_bookmark">පොත් යොදනය ඉවත් කරන්න</string>
+    <string name="clear_history">ඉතිහාසය හිස් කරන්න</string>
+    <string name="share">බෙදාගන්න</string>
+    <string name="private_tab">පෞද්ගලික ටැබ්</string>
+    <string name="private_mode_notice">පෞද්ගලික ටැබ් — මෙම ටැබ් එකේ ඉතිහාසය DevBrowser සුරකින්නේ නැත, නමුත් වෙබ් අඩවි, ප්‍රොක්සි සහ ඔබේ ජාලය තවමත් ඔබව නිරීක්ෂණය කළ හැක.</string>
+
+    <!-- Menu / screens -->
+    <string name="extensions">ඇඩ්-ඔන්ස්</string>
+    <string name="proxy_and_tor">ප්‍රොක්සි &amp; Tor</string>
+    <string name="settings">සැකසුම්</string>
+    <string name="view_page_source">පිටුවේ source එක බලන්න</string>
+    <string name="about_config">about:config</string>
+    <string name="exit">පිටවෙන්න</string>
+    <string name="downloads_started">%1$s බාගැනෙමින්</string>
+    <string name="download_failed">බාගැනීම අසාර්ථක විය</string>
+
+    <!-- Extensions screen -->
+    <string name="extensions_title">ඇඩ්-ඔන්ස්</string>
+    <string name="extensions_subtitle">ඕනෑම Firefox extension එකක් (WebExtension) URL එකකින් හෝ .xpi file එකකින් install කරන්න</string>
+    <string name="install_from_url">URL එකකින් install කරන්න</string>
+    <string name="install_from_file">File එකකින් install කරන්න (.xpi)</string>
+    <string name="extension_url_hint">https://addons.mozilla.org/… හෝ කෙලින්ම .xpi link එකක්</string>
+    <string name="install">Install</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="enable">සක්‍රිය කරන්න</string>
+    <string name="disable">අක්‍රිය කරන්න</string>
+    <string name="allow_in_private">පෞද්ගලික ටැබ්වල ඉඩ දෙන්න</string>
+    <string name="update_extension">යාවත්කාලීන බලන්න</string>
+    <string name="no_extensions">තවම ඇඩ්-ඔන්ස් install කරලා නැහැ</string>
+    <string name="extension_installed">%1$s install වුණා</string>
+    <string name="extension_install_failed">Install කිරීම අසාර්ථක විය</string>
+    <string name="extension_uninstalled">%1$s ඉවත් කළා</string>
+    <string name="resolving_amo_link">බාගැනීමේ link එක හොයමින්…</string>
+    <string name="amo_hint">ඉඟිය: addons.mozilla.org පිටුවක link එකක් හෝ කෙලින්ම .xpi URL එකක් paste කරන්න.</string>
+    <string name="permissions_title">මෙම ඇඩ්-ඔන් එකට අවශ්‍යයි:</string>
+
+    <!-- Proxy screen -->
+    <string name="proxy_title">ප්‍රොක්සි &amp; Tor</string>
+    <string name="proxy_mode">ප්‍රොක්සි ආකාරය</string>
+    <string name="proxy_direct">සෘජුව (ප්‍රොක්සි නැත)</string>
+    <string name="proxy_system">පද්ධති ප්‍රොක්සි</string>
+    <string name="proxy_manual">අතින් සකසන ප්‍රොක්සි</string>
+    <string name="proxy_tor">Tor (Orbot)</string>
+    <string name="proxy_host">හෝස්ට්</string>
+    <string name="proxy_port">පෝට්</string>
+    <string name="proxy_socks_version">SOCKS වර්ශනය</string>
+    <string name="proxy_remote_dns">DNS ප්‍රොක්සි හරහා යවන්න</string>
+    <string name="apply">යොදන්න</string>
+    <string name="applied">යොදන ලදී</string>
+    <string name="tor_hint">Orbot app එක install කරලා එය සක්‍රිය කරන්න, ඊට පස්සේ මේ විකල්පය සක්‍රිය කරන්න. Traffic එක 127.0.0.1:9050 මත SOCKS5 හරහා යවනවා.</string>
+    <string name="tor_check">Tor සම්බන්ධතාවය පරීක්ෂා කරන්න</string>
+    <string name="open_orbot">Orbot / Play Store විවෘත කරන්න</string>
+    <string name="tor_warning">Tor ආකාරයෙන් ඔබේ IP එක සැඟවෙනවා, නමුත් පිටු load වීමට Orbot run වෙමින් තිබෙන්න ඕන.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">සැකසුම්</string>
+    <string name="general">සාමාන්‍ය</string>
+    <string name="search_engine">සෙවුම් එන්ජිම</string>
+    <string name="privacy_security">රහස්‍යතාව &amp; ආරක්ෂාව</string>
+    <string name="developer">Developer</string>
+    <string name="appearance">පෙනුම</string>
+    <string name="tracking_protection">ලුහුබැඳීමේ ආරක්ෂාව</string>
+    <string name="tp_standard">සම්මත</string>
+    <string name="tp_strict">දැඩි</string>
+    <string name="tp_none">ක්‍රියා විරහිත</string>
+    <string name="https_only">HTTPS-පමණක් ආකාරය</string>
+    <string name="javascript">JavaScript</string>
+    <string name="web_fonts">වෙබ් fonts</string>
+    <string name="remote_debugging">දුරස්ථ debugging (about:debugging)</string>
+    <string name="remote_debugging_summary">සක්‍රිය කරලා desktop Firefox → about:debugging හරහා USB/Wi-Fi වලින් සම්බන්ධ වන්න</string>
+    <string name="console_to_logcat">Console output logcat වෙත</string>
+    <string name="enable_about_config">about:config සක්‍රිය කරන්න</string>
+    <string name="block_popups">පොප්-අප් කවුළු අවහිර කරන්න</string>
+    <string name="doh_title">DNS over HTTPS</string>
+    <string name="doh_default">පෙරනිමිය</string>
+    <string name="doh_custom">අභිරුචිය</string>
+    <string name="doh_off">ක්‍රියා විරහිත</string>
+    <string name="amoled_black">AMOLED සම්පූර්ණ කළු theme</string>
+    <string name="restore_tabs">ආරම්භයේදී ටැබ්ස් නැවත සුරක්ෂිත කරන්න</string>
+    <string name="clear_browsing_data">ගවේෂණ දත්ත හිස් කරන්න</string>
+    <string name="data_cleared">ගවේෂණ දත්ත හිස් කළා</string>
+    <string name="engine_version">එන්ජිම</string>
+
+    <!-- Library -->
+    <string name="library_title">පුස්තකාලය</string>
+    <string name="no_bookmarks">තවම පොත් යොදන නැහැ</string>
+    <string name="no_history">තවම ඉතිහාසය නැහැ</string>
+    <string name="delete">මකන්න</string>
+
+    <!-- Prompts -->
+    <string name="ok">හරි</string>
+    <string name="cancel">අවලංගු</string>
+    <string name="username">පරිශීලක නාමය</string>
+    <string name="password">මුරපදය</string>
+    <string name="site_asks">%1$s පවසනවා</string>
+    <string name="allow">ඉඩ දෙන්න</string>
+    <string name="deny">ප්‍රතික්ෂේප</string>
+    <string name="camera_permission">අඩවිය කැමරාවට ප්‍රවේශය ඉල්ලයි</string>
+    <string name="microphone_permission">අඩවිය මයික්‍රොෆෝනයට ප්‍රවේශය ඉල්ලයි</string>
+    <string name="location_permission">අඩවිය ඔබේ ස්ථානය ඉල්ලයි</string>
+    <string name="notification_permission">අඩවිය දැනුම්දීම් යැවීමට ඉල්ලයි</string>
+    <string name="persistent_storage">අඩවිය දත්ත සුරැකීමට ඉල්ලයි</string>
+    <string name="media_permission">අඩවිය කැමරාව සහ/හෝ මයික්‍රොෆෝනය ඉල්ලයි</string>
+    <string name="pick_file">File එකක් තෝරන්න</string>
+
+    <!-- Error page -->
+    <string name="page_load_error">සම්බන්ධ විය නොහැක</string>
+    <string name="page_load_error_hint">ලිපිනය, ප්‍රොක්සි සැකසුම් හෝ සම්බන්ධතාවය පරීක්ෂා කරලා නැවත උත්සාහ කරන්න.</string>
+    <string name="try_again">නැවත උත්සාහ කරන්න</string>
+
+    <!-- Misc -->
+    <string name="extension_update_no_update">යාවත්කාලීන නැහැ</string>
+    <string name="url_copied">URL පිටපත් වුණා</string>
+    <string name="find_no_matches">0/0</string>
+    <string name="open_in_browser">DevBrowser එකේ විවෘත කරන්න</string>
+    <string name="search_with">%1$s සමඟ සොයන්න</string>
+    <string name="copied">පිටපත් වුණා</string>
+</resources>

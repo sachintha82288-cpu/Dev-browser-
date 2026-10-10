@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevBrowser</string>
+
+    <!-- Browser UI -->
+    <string name="search_hint">Search or enter address</string>
+    <string name="menu">Menu</string>
+    <string name="tabs">Tabs</string>
+    <string name="new_tab">New tab</string>
+    <string name="new_private_tab">New private tab</string>
+    <string name="close_tab">Close tab</string>
+    <string name="close_all_tabs">Close all tabs</string>
+    <string name="reload">Reload</string>
+    <string name="stop">Stop</string>
+    <string name="forward">Forward</string>
+    <string name="home">Home</string>
+    <string name="back">Back</string>
+    <string name="find_in_page">Find in page</string>
+    <string name="find_next">Next match</string>
+    <string name="find_previous">Previous match</string>
+    <string name="match_case">Match case</string>
+    <string name="find_no_matches">0/0</string>
+    <string name="desktop_site">Desktop site</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="history">History</string>
+    <string name="add_bookmark">Bookmark this page</string>
+    <string name="remove_bookmark">Remove bookmark</string>
+    <string name="clear_history">Clear history</string>
+    <string name="share">Share</string>
+    <string name="open_in_browser">Open in DevBrowser</string>
+    <string name="search_with">Search with %1$s</string>
+    <string name="private_tab">Private tab</string>
+    <string name="private_mode_notice">Private tab — DevBrowser won’t save this tab’s history, but websites, proxies and your network operator can still track you.</string>
+
+    <!-- Menu / screens -->
+    <string name="extensions">Add-ons</string>
+    <string name="proxy_and_tor">Proxy &amp; Tor</string>
+    <string name="settings">Settings</string>
+    <string name="view_page_source">View page source</string>
+    <string name="about_config">about:config</string>
+    <string name="exit">Exit</string>
+    <string name="downloads_started">Downloading %1$s</string>
+    <string name="download_failed">Download failed</string>
+
+    <!-- Extensions screen -->
+    <string name="extensions_title">Add-ons</string>
+    <string name="extensions_subtitle">Install any Firefox extension (WebExtension) from a URL or an .xpi file</string>
+    <string name="install_from_url">Install from URL</string>
+    <string name="install_from_file">Install from file (.xpi)</string>
+    <string name="extension_url_hint">https://addons.mozilla.org/… or direct .xpi link</string>
+    <string name="install">Install</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="allow_in_private">Allow in private tabs</string>
+    <string name="update_extension">Check for update</string>
+    <string name="no_extensions">No add-ons installed yet</string>
+    <string name="extension_installed">%1$s installed</string>
+    <string name="extension_install_failed">Installation failed</string>
+    <string name="extension_uninstalled">%1$s removed</string>
+    <string name="resolving_amo_link">Finding download link…</string>
+    <string name="amo_hint">Tip: paste an addons.mozilla.org page link or a direct .xpi URL.</string>
+    <string name="permissions_title">This add-on requires:</string>
+
+    <!-- Proxy screen -->
+    <string name="proxy_title">Proxy &amp; Tor</string>
+    <string name="proxy_mode">Proxy mode</string>
+    <string name="proxy_direct">Direct (no proxy)</string>
+    <string name="proxy_system">Use system proxy</string>
+    <string name="proxy_manual">Manual proxy</string>
+    <string name="proxy_tor">Tor (Orbot)</string>
+    <string name="proxy_host">Host</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_socks_version">SOCKS version</string>
+    <string name="proxy_remote_dns">Route DNS through the proxy</string>
+    <string name="apply">Apply</string>
+    <string name="applied">Applied</string>
+    <string name="tor_hint">Install the Orbot app, start it, then enable this option. Traffic is routed through SOCKS5 on 127.0.0.1:9050.</string>
+    <string name="tor_check">Check Tor connection</string>
+    <string name="open_orbot">Open Orbot / Play Store</string>
+    <string name="tor_warning">Tor mode hides your IP from websites, but Orbot must be running for pages to load.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="general">General</string>
+    <string name="search_engine">Search engine</string>
+    <string name="privacy_security">Privacy &amp; security</string>
+    <string name="developer">Developer</string>
+    <string name="appearance">Appearance</string>
+    <string name="tracking_protection">Tracking protection</string>
+    <string name="tp_standard">Standard</string>
+    <string name="tp_strict">Strict</string>
+    <string name="tp_none">Off</string>
+    <string name="https_only">HTTPS-only mode</string>
+    <string name="javascript">JavaScript</string>
+    <string name="web_fonts">Web fonts</string>
+    <string name="remote_debugging">Remote debugging (about:debugging)</string>
+    <string name="remote_debugging_summary">Enable, connect over USB/Wi-Fi from desktop Firefox → about:debugging</string>
+    <string name="console_to_logcat">Console output to logcat</string>
+    <string name="enable_about_config">Enable about:config</string>
+    <string name="block_popups">Block pop-up windows</string>
+    <string name="doh_title">DNS over HTTPS</string>
+    <string name="doh_default">Default</string>
+    <string name="doh_custom">Custom</string>
+    <string name="doh_off">Off</string>
+    <string name="amoled_black">AMOLED pure black theme</string>
+    <string name="restore_tabs">Restore tabs on startup</string>
+    <string name="clear_browsing_data">Clear browsing data</string>
+    <string name="data_cleared">Browsing data cleared</string>
+    <string name="engine_version">Engine</string>
+
+    <!-- Library -->
+    <string name="library_title">Library</string>
+    <string name="no_bookmarks">No bookmarks yet</string>
+    <string name="no_history">No history yet</string>
+    <string name="delete">Delete</string>
+
+    <!-- Prompts -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="site_asks">%1$s says</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="camera_permission">Site requests camera access</string>
+    <string name="microphone_permission">Site requests microphone access</string>
+    <string name="location_permission">Site requests your location</string>
+    <string name="notification_permission">Site requests to send notifications</string>
+    <string name="persistent_storage">Site requests to store data in persistent storage</string>
+    <string name="media_permission">Site requests camera and/or microphone</string>
+    <string name="pick_file">Pick file</string>
+
+    <!-- Error page -->
+    <string name="page_load_error">Can’t connect</string>
+    <string name="page_load_error_hint">Check the address, your proxy settings or your connection, then try again.</string>
+    <string name="try_again">Try again</string>
+
+    <!-- Misc -->
+    <string name="extension_update_no_update">No update available</string>
+    <string name="copied">Copied</string>
+    <string name="url_copied">URL copied</string>
+</resources>
