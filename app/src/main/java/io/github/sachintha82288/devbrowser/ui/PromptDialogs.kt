@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -118,13 +121,13 @@ fun PromptDialog(
             var password by remember(prompt) { mutableStateOf("") }
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text(prompt.title ?: "Authentication required") },
+                title = { Text(prompt.title ?: stringResource(R.string.auth_required)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (!prompt.message.isNullOrBlank()) Text(prompt.message)
                         if (prompt.previousFailed) {
                             Text(
-                                "Login failed — try again.",
+                                stringResource(R.string.auth_failed),
                                 color = MaterialTheme.colorScheme.error,
                                 style = MaterialTheme.typography.bodySmall,
                             )
@@ -164,7 +167,7 @@ fun PromptDialog(
             var selected by remember(prompt) { mutableStateOf(setOf<String>()) }
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text(prompt.title ?: "Choose") },
+                title = { Text(prompt.title ?: stringResource(R.string.choose)) },
                 text = {
                     Column(
                         modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -229,7 +232,7 @@ fun PromptDialog(
             val swatches = (prompt.predefined + listOf("#FF2E63", "#00E5FF", "#9D4EDD", "#3DDC97")).distinct()
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text("Pick a color") },
+                title = { Text(stringResource(R.string.pick_color)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
@@ -272,14 +275,14 @@ fun PromptDialog(
             var value by remember(prompt) { mutableStateOf(prompt.defaultValue ?: "") }
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text("Enter date/time value") },
+                title = { Text(stringResource(R.string.enter_datetime)) },
                 text = {
                     OutlinedTextField(
                         value = value,
                         onValueChange = { value = it },
                         singleLine = true,
                         textStyle = MonoTextStyle,
-                        placeholder = { Text("e.g. 2026-01-31 or 13:45") },
+                        placeholder = { Text(stringResource(R.string.datetime_hint)) },
                     )
                 },
                 confirmButton = {
@@ -301,7 +304,7 @@ fun PromptDialog(
 
         is ActivePrompt.Unsupported -> AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("Not supported") },
+            title = { Text(stringResource(R.string.not_supported)) },
             text = { Text(prompt.message) },
             confirmButton = {
                 TextButton(onClick = onDismiss) { Text(stringResource(R.string.ok)) }
@@ -321,7 +324,7 @@ fun PermissionDialog(
         ActivePermission.Kind.NOTIFICATION -> stringResource(R.string.notification_permission)
         ActivePermission.Kind.PERSISTENT_STORAGE -> stringResource(R.string.persistent_storage)
         ActivePermission.Kind.MEDIA -> stringResource(R.string.media_permission)
-        ActivePermission.Kind.OTHER -> "The site requests an extra permission"
+        ActivePermission.Kind.OTHER -> stringResource(R.string.extra_permission)
     }
     AlertDialog(
         onDismissRequest = { onAnswer(false) },
@@ -346,7 +349,11 @@ fun ExtensionPermissionDialog(
         onDismissRequest = { onAnswer(false, false) },
         title = {
             Text(
-                if (prompt.isUpdate) "Update ${prompt.extensionName}?" else "Add ${prompt.extensionName}?",
+                if (prompt.isUpdate) {
+                    stringResource(R.string.update_extension_title, prompt.extensionName)
+                } else {
+                    stringResource(R.string.add_extension_title, prompt.extensionName)
+                },
             )
         },
         text = {
@@ -361,7 +368,7 @@ fun ExtensionPermissionDialog(
                         )
                     }
                 } else {
-                    Text("This add-on requires no special permissions.")
+                    Text(stringResource(R.string.no_permissions_needed))
                 }
                 Row {
                     Checkbox(checked = allowPrivate, onCheckedChange = { allowPrivate = it })

@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.VisibilityOff
@@ -28,9 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.NeonPurple
 import io.github.sachintha82288.devbrowser.ui.theme.NeonRed
@@ -44,6 +46,7 @@ fun TabChip(
     onClick: () -> Unit,
     onClose: () -> Unit,
 ) {
+    val fallbackTitle = stringResource(R.string.new_tab)
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = if (isSelected) {
@@ -69,7 +72,7 @@ fun TabChip(
                 modifier = Modifier.size(13.dp),
             )
             Text(
-                text = title.ifBlank { "New tab" },
+                text = title.ifBlank { fallbackTitle },
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -97,7 +100,7 @@ fun ScreenHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
             }
             Text(
                 text = title,

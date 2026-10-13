@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.ActiveExtensionPrompt
 import io.github.sachintha82288.devbrowser.browser.TabsController
 import kotlinx.coroutines.CoroutineScope
@@ -59,12 +60,16 @@ class ExtensionManager(
 
     fun start() {
         extController.promptDelegate = PromptHandler()
-        extController.debuggerDelegate = DebuggerHandler()
+        // The controller only exposes a setter here, so there is no synthetic
+        // Kotlin property to assign to.
+        extController.setDebuggerDelegate(DebuggerHandler())
         refresh()
     }
 
     fun refresh() {
-        extController.list().accept({ list ->
+        extController.list().accept({ result ->
+            // GeckoView hands the list over nullable.
+            val list: List<WebExtension> = result.orEmpty()
             rawExtensions = list
             extensions = list.map { it.toInfo() }.sortedBy { it.name.lowercase() }
         }) { e ->
@@ -86,7 +91,7 @@ class ExtensionManager(
             }
             if (resolved == null && !url.startsWith("http")) {
                 busy = false
-                controller.showSnackbar("Could not resolve add-on link")
+                controller.showSnackbar(appContext.getString(R.string.could_not_resolve_addon))
                 return@launch
             }
             install(resolved ?: url)
@@ -100,7 +105,7 @@ class ExtensionManager(
             val staged = withContext(Dispatchers.IO) { stageFile(uri) }
             if (staged == null) {
                 busy = false
-                controller.showSnackbar("Could not read the selected file")
+                controller.showSnackbar(appContext.getString(R.string.could_not_read_file))
                 return@launch
             }
             install("file://$staged", fromFile = true)
@@ -113,22 +118,34 @@ class ExtensionManager(
             if (method != null) extController.install(url, method) else extController.install(url)
         result.accept({ ext ->
             busy = false
-            controller.showSnackbar("${ext.metaData?.name ?: "Add-on"} installed")
+            val name = ext?.metaData?.name ?: ext?.id ?: url.substringAfterLast('/')
+            controller.showSnackbar(
+                appContext.getString(R.string.extension_installed, name),
+            )
             refresh()
         }) { e ->
             busy = false
-            val reason = if (e is WebExtension.InstallException) describeError(e) else (e.message ?: "unknown error")
-            controller.showSnackbar("Install failed: $reason")
+            val reason =
+                if (e is WebExtension.InstallException) {
+                    describeError(e)
+                } else {
+                    e?.message ?: "unknown error"
+                }
+            controller.showSnackbar(appContext.getString(R.string.install_failed_reason, reason))
         }
     }
 
     fun uninstall(info: ExtensionInfo) {
         findExtension(info.id)?.let { ext ->
             extController.uninstall(ext).accept({
-                controller.showSnackbar("${info.name} removed")
+                controller.showSnackbar(
+                    appContext.getString(R.string.extension_uninstalled, info.name),
+                )
                 refresh()
             }) { e ->
-                controller.showSnackbar("Uninstall failed: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.uninstall_failed_reason, e?.message ?: ""),
+                )
             }
         }
     }
@@ -141,7 +158,9 @@ class ExtensionManager(
                 extController.disable(ext, WebExtensionController.EnableSource.USER)
             }
             result.accept({ refresh() }) { e ->
-                controller.showSnackbar("Could not change add-on: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.addon_change_failed, e?.message ?: ""),
+                )
             }
         }
     }
@@ -151,7 +170,9 @@ class ExtensionManager(
             extController.setAllowedInPrivateBrowsing(ext, allowed).accept({
                 refresh()
             }) { e ->
-                controller.showSnackbar("Could not change add-on: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.addon_change_failed, e?.message ?: ""),
+                )
             }
         }
     }
@@ -161,15 +182,24 @@ class ExtensionManager(
             busy = true
             extController.update(ext).accept({ updated ->
                 busy = false
-                if (updated == null || updated.metaData?.version == info.version) {
-                    controller.showSnackbar("No update available")
+                if (updated == null || updated.metaData.version == info.version) {
+                    controller.showSnackbar(
+                        appContext.getString(R.string.extension_update_no_update),
+                    )
                 } else {
-                    controller.showSnackbar("Updated to ${updated.metaData?.version}")
+                    controller.showSnackbar(
+                        appContext.getString(
+                            R.string.updated_to_version,
+                            updated.metaData.version,
+                        ),
+                    )
                 }
                 refresh()
             }) { e ->
                 busy = false
-                controller.showSnackbar("Update check failed: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.update_check_failed, e?.message ?: ""),
+                )
             }
         }
     }
@@ -253,13 +283,13 @@ class ExtensionManager(
         val meta = metaData
         return ExtensionInfo(
             id = id,
-            name = meta?.name ?: id,
-            version = meta?.version ?: "",
-            description = meta?.description ?: "",
-            enabled = meta?.enabled ?: true,
-            allowedInPrivateBrowsing = meta?.allowedInPrivateBrowsing ?: false,
-            optionsPageUrl = meta?.optionsPageUrl,
-            homepageUrl = meta?.homepageUrl,
+            name = meta.name ?: id,
+            version = meta.version,
+            description = meta.description ?: "",
+            enabled = meta.enabled,
+            allowedInPrivateBrowsing = meta.allowedInPrivateBrowsing,
+            optionsPageUrl = meta.optionsPageUrl,
+            homepageUrl = meta.homepageUrl,
         )
     }
 
@@ -275,7 +305,7 @@ class ExtensionManager(
             val result = GeckoResult<WebExtension.PermissionPromptResponse>()
             controller.showExtensionPrompt(
                 ActiveExtensionPrompt(
-                    extensionName = extension.metaData?.name ?: extension.id,
+                    extensionName = extension.metaData.name ?: extension.id,
                     permissions = permissions.toList() + origins.map { "access: $it" },
                     isUpdate = false,
                     onAnswer = { granted, privateGranted ->
@@ -301,7 +331,7 @@ class ExtensionManager(
             val result = GeckoResult<AllowOrDeny>()
             controller.showExtensionPrompt(
                 ActiveExtensionPrompt(
-                    extensionName = extension.metaData?.name ?: extension.id,
+                    extensionName = extension.metaData.name ?: extension.id,
                     permissions = newPermissions.toList() + newOrigins.map { "access: $it" },
                     isUpdate = true,
                     onAnswer = { granted, _ ->

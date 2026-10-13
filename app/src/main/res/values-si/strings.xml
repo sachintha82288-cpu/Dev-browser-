@@ -137,7 +137,50 @@
     <string name="extension_update_no_update">යාවත්කාලීන නැහැ</string>
     <string name="url_copied">URL පිටපත් වුණා</string>
     <string name="find_no_matches">0/0</string>
+    <string name="close">වසන්න</string>
     <string name="open_in_browser">DevBrowser එකේ විවෘත කරන්න</string>
     <string name="search_with">%1$s සමඟ සොයන්න</string>
     <string name="copied">පිටපත් වුණා</string>
+
+    <!-- Menu / tabs / library -->
+    <string name="bookmarks_and_history">පොත් යොදන සහ ඉතිහාසය</string>
+    <string name="tabs_title">ටැබ්ස් (%1$d)</string>
+    <string name="private_label">පෞද්ගලික</string>
+    <string name="close_private_tabs">පෞද්ගලික ටැබ් වසන්න</string>
+    <string name="loading_progress">පූරණය වෙමින්… %1$d%%</string>
+    <string name="bookmarked">පොත් යොදනය සුරැකුවා</string>
+    <string name="bookmark_removed">පොත් යොදනය ඉවත් කළා</string>
+
+    <!-- Add-ons -->
+    <string name="installed">Install කර ඇති</string>
+    <string name="enabled">සක්‍රියයි</string>
+    <string name="version_label">v%1$s</string>
+    <string name="add_extension_title">%1$s එකතු කරන්නද?</string>
+    <string name="update_extension_title">%1$s යාවත්කාලීන කරන්නද?</string>
+    <string name="no_permissions_needed">මෙම ඇඩ්-ඔන් එකට විශේෂ අවසර අවශ්‍ය නැත.</string>
+    <string name="could_not_resolve_addon">ඇඩ්-ඔන් link එක සොයාගත නොහැකි විය</string>
+    <string name="could_not_read_file">තෝරාගත් file එක කියවිය නොහැකි විය</string>
+    <string name="install_failed_reason">Install කිරීම අසාර්ථකයි: %1$s</string>
+    <string name="uninstall_failed_reason">ඉවත් කිරීම අසාර්ථකයි: %1$s</string>
+    <string name="addon_change_failed">ඇඩ්-ඔන් එක වෙනස් කළ නොහැකි විය: %1$s</string>
+    <string name="updated_to_version">%1$s වෙත යාවත්කාලීන විය</string>
+    <string name="update_check_failed">යාවත්කාලීන පරීක්ෂාව අසාර්ථකයි: %1$s</string>
+    <string name="allow_unsigned_extensions">අත්සන් නොකළ ඇඩ්-ඔන්වලට ඉඩ දෙන්න</string>
+    <string name="allow_unsigned_extensions_summary">ඔබම හදපු .xpi files install වෙන්න xpinstall.signatures.required=false engine startup config එකට ලියනවා. Firefox engine එකේ release builds ඒවා තවමත් ප්‍රතික්ෂේප කරන්න පුළුවන්.</string>
+
+    <!-- Settings -->
+    <string name="about">පිළිබඳව</string>
+    <string name="doh_url_label">DoH resolver URL එක</string>
+    <string name="clear_data_warning">Cookies, cache, අඩවි දත්ත, අවසර සහ සැසි (sessions) හිස් කරනවා.</string>
+    <string name="clear_data_failed">ගවේෂණ දත්ත හිස් කළ නොහැකි විය</string>
+
+    <!-- Prompts -->
+    <string name="auth_required">සත්‍යාපනය අවශ්‍යයි</string>
+    <string name="auth_failed">පිවිසීම අසාර්ථක විය — නැවත උත්සාහ කරන්න.</string>
+    <string name="choose">තෝරන්න</string>
+    <string name="pick_color">පාටක් තෝරන්න</string>
+    <string name="enter_datetime">දිනය/වේලාව ඇතුල් කරන්න</string>
+    <string name="datetime_hint">උදා: 2026-01-31 හෝ 13:45</string>
+    <string name="not_supported">සහාය නොදක්වයි</string>
+    <string name="extra_permission">අඩවිය අමතර අවසරයක් ඉල්ලා සිටිනවා</string>
 </resources>

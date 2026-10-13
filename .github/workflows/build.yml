@@ -1,0 +1,120 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main", "arena/**" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assemble:
+    name: build ${{ matrix.variant }}
+    runs-on: ubuntu-latest
+    # GeckoView is a ~230 MB AAR and R8 has to walk all of it, so give both
+    # variants room instead of relying on the 6 hour default.
+    timeout-minutes: 60
+    strategy:
+      # A failing release build must not hide a healthy debug build.
+      fail-fast: false
+      matrix:
+        include:
+          - variant: Debug
+            tasks: testDebugUnitTest assembleDebug
+          - variant: Release
+            tasks: assembleRelease
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Caches the Gradle user home (GeckoView is a big download).
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # The runner image ships the Android SDK with licences accepted, so AGP
+      # installs platform android-37.1 and build-tools 37.0.0 on demand.
+      # GeckoView comes from maven.mozilla.org (declared in settings.gradle.kts).
+      # Release builds come out unsigned: no signing key lives in this repo.
+      - name: Run the unit tests and build APKs (per-ABI splits + universal)
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon ${{ matrix.tasks }} 2>&1 | tee build.log
+
+      # Kotlin/AGP/R8 errors are much easier to act on in the PR than in a log tab.
+      - name: Report build errors on the pull request
+        if: steps.build.outcome == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### :x: \`assemble${{ matrix.variant }}\` failed"
+            echo
+            echo '```'
+            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Missing class|R8:|Deprecated Gradle|requires Android Gradle plugin|compile against version|FAILED|There were failing tests|expected:|AssertionError" build.log | head -n 150
+            echo '```'
+            echo
+            echo "<details><summary>compiler warnings ($(grep -cE '^w: ' build.log))</summary>"
+            echo
+            echo '```'
+            grep -E "^w: " build.log | sort | uniq -c | sort -rn | head -n 60
+            echo '```'
+            echo
+            echo "</details>"
+            echo
+            echo "<details><summary>tail of the Gradle log</summary>"
+            echo
+            echo '```'
+            tail -n 80 build.log
+            echo '```'
+            echo
+            echo "</details>"
+          } > build-report.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file build-report.md
+
+      - name: Upload the Gradle log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log-${{ matrix.variant }}
+          path: build.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: List the APKs that were produced
+        if: steps.build.outcome == 'success'
+        run: |
+          find app/build/outputs/apk -name '*.apk' -exec ls -lh {} +
+          find app/build/outputs/apk -name '*.apk' -exec sha256sum {} +
+
+      # Only the arm64-v8a debug APK is uploaded: a GeckoView APK is ~110 MB per
+      # ABI and the universal one is several times that, which would blow
+      # straight through the Actions storage quota. The release APKs are
+      # unsigned anyway, so there is nothing to install. Build the other ABIs
+      # locally with ./gradlew assembleDebug (see README).
+      - name: Upload the arm64-v8a debug APK
+        if: steps.build.outcome == 'success' && matrix.variant == 'Debug'
+        uses: actions/upload-artifact@v4
+        with:
+          name: devbrowser-debug-arm64-v8a
+          path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Fail the job when the build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1

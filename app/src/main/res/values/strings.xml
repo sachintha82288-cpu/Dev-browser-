@@ -20,6 +20,7 @@
     <string name="find_previous">Previous match</string>
     <string name="match_case">Match case</string>
     <string name="find_no_matches">0/0</string>
+    <string name="close">Close</string>
     <string name="desktop_site">Desktop site</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="history">History</string>
@@ -140,4 +141,46 @@
     <string name="extension_update_no_update">No update available</string>
     <string name="copied">Copied</string>
     <string name="url_copied">URL copied</string>
+
+    <!-- Menu / tabs / library -->
+    <string name="bookmarks_and_history">Bookmarks &amp; history</string>
+    <string name="tabs_title">Tabs (%1$d)</string>
+    <string name="private_label">Private</string>
+    <string name="close_private_tabs">Close private tabs</string>
+    <string name="loading_progress">loading… %1$d%%</string>
+    <string name="bookmarked">Bookmarked</string>
+    <string name="bookmark_removed">Bookmark removed</string>
+
+    <!-- Add-ons -->
+    <string name="installed">Installed</string>
+    <string name="enabled">Enabled</string>
+    <string name="version_label">v%1$s</string>
+    <string name="add_extension_title">Add %1$s?</string>
+    <string name="update_extension_title">Update %1$s?</string>
+    <string name="no_permissions_needed">This add-on requires no special permissions.</string>
+    <string name="could_not_resolve_addon">Could not resolve add-on link</string>
+    <string name="could_not_read_file">Could not read the selected file</string>
+    <string name="install_failed_reason">Install failed: %1$s</string>
+    <string name="uninstall_failed_reason">Uninstall failed: %1$s</string>
+    <string name="addon_change_failed">Could not change add-on: %1$s</string>
+    <string name="updated_to_version">Updated to %1$s</string>
+    <string name="update_check_failed">Update check failed: %1$s</string>
+    <string name="allow_unsigned_extensions">Allow unsigned add-ons</string>
+    <string name="allow_unsigned_extensions_summary">Writes xpinstall.signatures.required=false to the engine startup config so self-built .xpi files install. Release builds of the Firefox engine may still refuse them.</string>
+
+    <!-- Settings -->
+    <string name="about">About</string>
+    <string name="doh_url_label">DoH resolver URL</string>
+    <string name="clear_data_warning">Cookies, cache, site data, permissions and sessions will be cleared.</string>
+    <string name="clear_data_failed">Could not clear browsing data</string>
+
+    <!-- Prompts -->
+    <string name="auth_required">Authentication required</string>
+    <string name="auth_failed">Login failed — try again.</string>
+    <string name="choose">Choose</string>
+    <string name="pick_color">Pick a color</string>
+    <string name="enter_datetime">Enter date/time value</string>
+    <string name="datetime_hint">e.g. 2026-01-31 or 13:45</string>
+    <string name="not_supported">Not supported</string>
+    <string name="extra_permission">The site requests an extra permission</string>
 </resources>

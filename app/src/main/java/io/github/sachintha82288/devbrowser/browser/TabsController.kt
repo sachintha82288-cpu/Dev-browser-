@@ -9,6 +9,7 @@ import android.webkit.URLUtil
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.data.AppSettings
 import io.github.sachintha82288.devbrowser.data.Library
 import io.github.sachintha82288.devbrowser.downloads.Downloader
@@ -251,10 +252,11 @@ class TabsController(
     }
 
     fun download(response: WebResponse) {
+        val name = response.uri.substringAfterLast('/').ifBlank { response.uri }
         val ok = Downloader.enqueue(appContext, response)
         showSnackbar(
-            if (ok) "Download started: ${response.uri.substringAfterLast('/')}"
-            else "Download failed",
+            if (ok) appContext.getString(R.string.downloads_started, name)
+            else appContext.getString(R.string.download_failed),
         )
     }
 

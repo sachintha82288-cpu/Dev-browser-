@@ -21,7 +21,6 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -126,7 +125,7 @@ fun ExtensionsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                 }
             }
 
-            SectionLabel("Installed")
+            SectionLabel(stringResource(R.string.installed))
 
             if (manager.extensions.isEmpty()) {
                 Text(
@@ -176,7 +175,7 @@ private fun ExtensionCard(
                         .padding(start = 10.dp),
                 )
                 Text(
-                    text = "v${ext.version}",
+                    text = stringResource(R.string.version_label, ext.version),
                     style = MonoTextStyle,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -196,7 +195,7 @@ private fun ExtensionCard(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = "Enabled",
+                    text = stringResource(R.string.enabled),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                 )

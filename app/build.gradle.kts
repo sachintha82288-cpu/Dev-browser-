@@ -1,12 +1,24 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // Kotlin itself is compiled by AGP 9's built-in Kotlin support; only the
+    // Compose compiler plugin has to be applied here.
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "io.github.sachintha82288.devbrowser"
-    compileSdk = 36
+    // GeckoView 157 was built against Android 17 (API 37.1) and its AAR
+    // metadata makes that a hard floor for anything that depends on it, so the
+    // minor API level has to be spelled out. targetSdk stays at 36: compiling
+    // against a newer platform does not opt the app into new runtime behaviour.
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
+    buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "io.github.sachintha82288.devbrowser"
@@ -51,14 +63,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+// kotlinOptions is gone in AGP 9; the built-in Kotlin compiler is configured
+// through the top-level kotlin extension instead.
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
@@ -81,4 +97,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // UrlUtils' address-bar heuristics are pure string logic, so they are
+    // covered by plain JVM tests (src/test).
+    testImplementation(libs.junit)
 }
