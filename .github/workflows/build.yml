@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -32,12 +36,53 @@ jobs:
       # installs platform 36 / build-tools on demand. GeckoView comes from
       # maven.mozilla.org (declared in settings.gradle.kts).
       - name: Build debug APKs (per-ABI splits + universal)
-        run: ./gradlew --no-daemon assembleDebug
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon assembleDebug 2>&1 | tee build.log
+
+      # Kotlin/AGP errors are much easier to act on in the PR than in a log tab.
+      - name: Report build errors on the pull request
+        if: steps.build.outcome == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### :x: \`assembleDebug\` failed"
+            echo
+            echo '```'
+            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Deprecated Gradle" build.log | head -n 150
+            echo '```'
+            echo
+            echo "<details><summary>tail of the Gradle log</summary>"
+            echo
+            echo '```'
+            tail -n 60 build.log
+            echo '```'
+            echo
+            echo "</details>"
+          } > build-report.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file build-report.md
+
+      - name: Upload the Gradle log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log
+          path: build.log
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload debug APKs
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: devbrowser-debug-apks
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Fail the job when the build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1
