@@ -60,12 +60,16 @@ class ExtensionManager(
 
     fun start() {
         extController.promptDelegate = PromptHandler()
-        extController.debuggerDelegate = DebuggerHandler()
+        // The controller only exposes a setter here, so there is no synthetic
+        // Kotlin property to assign to.
+        extController.setDebuggerDelegate(DebuggerHandler())
         refresh()
     }
 
     fun refresh() {
-        extController.list().accept({ list ->
+        extController.list().accept({ result ->
+            // GeckoView hands the list over nullable.
+            val list: List<WebExtension> = result.orEmpty()
             rawExtensions = list
             extensions = list.map { it.toInfo() }.sortedBy { it.name.lowercase() }
         }) { e ->
@@ -114,16 +118,19 @@ class ExtensionManager(
             if (method != null) extController.install(url, method) else extController.install(url)
         result.accept({ ext ->
             busy = false
+            val name = ext?.metaData?.name ?: ext?.id ?: url.substringAfterLast('/')
             controller.showSnackbar(
-                appContext.getString(
-                    R.string.extension_installed,
-                    ext.metaData?.name ?: ext.id,
-                ),
+                appContext.getString(R.string.extension_installed, name),
             )
             refresh()
         }) { e ->
             busy = false
-            val reason = if (e is WebExtension.InstallException) describeError(e) else (e.message ?: "unknown error")
+            val reason =
+                if (e is WebExtension.InstallException) {
+                    describeError(e)
+                } else {
+                    e?.message ?: "unknown error"
+                }
             controller.showSnackbar(appContext.getString(R.string.install_failed_reason, reason))
         }
     }
@@ -137,7 +144,7 @@ class ExtensionManager(
                 refresh()
             }) { e ->
                 controller.showSnackbar(
-                    appContext.getString(R.string.uninstall_failed_reason, e.message ?: ""),
+                    appContext.getString(R.string.uninstall_failed_reason, e?.message ?: ""),
                 )
             }
         }
@@ -152,7 +159,7 @@ class ExtensionManager(
             }
             result.accept({ refresh() }) { e ->
                 controller.showSnackbar(
-                    appContext.getString(R.string.addon_change_failed, e.message ?: ""),
+                    appContext.getString(R.string.addon_change_failed, e?.message ?: ""),
                 )
             }
         }
@@ -164,7 +171,7 @@ class ExtensionManager(
                 refresh()
             }) { e ->
                 controller.showSnackbar(
-                    appContext.getString(R.string.addon_change_failed, e.message ?: ""),
+                    appContext.getString(R.string.addon_change_failed, e?.message ?: ""),
                 )
             }
         }
@@ -191,7 +198,7 @@ class ExtensionManager(
             }) { e ->
                 busy = false
                 controller.showSnackbar(
-                    appContext.getString(R.string.update_check_failed, e.message ?: ""),
+                    appContext.getString(R.string.update_check_failed, e?.message ?: ""),
                 )
             }
         }

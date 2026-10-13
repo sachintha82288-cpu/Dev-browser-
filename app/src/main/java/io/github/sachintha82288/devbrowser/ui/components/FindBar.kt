@@ -62,8 +62,8 @@ class FindBarState {
             (if (matchCase) GeckoSession.FINDER_FIND_MATCH_CASE else 0)
         try {
             session?.finder?.find(query, flags)?.accept({ result ->
-                current = result.current
-                total = result.total
+                current = result?.current ?: -1
+                total = result?.total ?: 0
             }) {
                 current = -1
                 total = 0

@@ -1,6 +1,6 @@
 package io.github.sachintha82288.devbrowser.ui
 
-import androidx.activity.BackHandler
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
