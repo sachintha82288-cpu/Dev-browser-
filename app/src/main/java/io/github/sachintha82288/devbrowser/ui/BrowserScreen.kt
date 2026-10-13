@@ -65,7 +65,6 @@ import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.ActivePrompt
 import io.github.sachintha82288.devbrowser.browser.BrowserTab
 import io.github.sachintha82288.devbrowser.ui.components.FindBar
-import io.github.sachintha82288.devbrowser.ui.components.FindBarState
 import io.github.sachintha82288.devbrowser.ui.components.TabChip
 import io.github.sachintha82288.devbrowser.ui.components.rememberFindBarState
 import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
@@ -90,6 +89,10 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
     val findBar = rememberFindBarState()
 
     val urlFocusRequester = remember { FocusRequester() }
+
+    // Snackbar copy — hoisted out of the click lambdas so it stays localized.
+    val bookmarkedText = stringResource(R.string.bookmarked)
+    val bookmarkRemovedText = stringResource(R.string.bookmark_removed)
 
     val filePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments(),
@@ -135,6 +138,8 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
     BackHandler(enabled = screen != Screen.Browser) { screen = Screen.Browser }
     BackHandler(enabled = findBar.active) { closeFind() }
 
+    // Root layout: browser chrome + web content, with dialogs, menus and
+    // overlay screens stacked on top of it.
     Box(modifier = Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -148,163 +153,166 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
             ) {
                 val fullScreen = tab?.isFullScreen == true
 
+                // Top chrome: URL bar (+ tab strip when more than one tab is open).
                 AnimatedVisibility(visible = !fullScreen) {
                     Column {
                         UrlBar(
-                        tab = tab,
-                        isBookmarked = app.library.isBookmarked(tab?.url),
-                        editMode = urlEdit,
-                        urlInput = urlInput,
-                        onInputChange = { urlInput = it },
-                        focusRequester = urlFocusRequester,
-                        onEnterEdit = {
-                            urlInput = tab?.url ?: ""
-                            urlEdit = true
-                        },
-                        onExitEdit = { urlEdit = false },
-                        onSubmit = {
-                            if (urlInput.isNotBlank()) {
-                                controller.loadInSelectedTab(urlInput)
-                            }
-                            urlEdit = false
-                        },
-                        onReloadStop = {
-                            val s = tab?.session
-                            if (tab?.loading == true) s?.stop() else s?.reload()
-                        },
-                        onToggleBookmark = {
-                            val url = tab?.url
-                            if (url != null) {
-                                if (app.library.isBookmarked(url)) {
-                                    app.library.removeBookmark(url)
-                                    controller.showSnackbar("Bookmark removed")
-                                } else {
-                                    app.library.addBookmark(
-                                        url,
-                                        tab.title.ifBlank { UrlUtils.titleFromUrl(url) },
-                                    )
-                                    controller.showSnackbar("Bookmarked")
+                            tab = tab,
+                            isBookmarked = app.library.isBookmarked(tab?.url),
+                            editMode = urlEdit,
+                            urlInput = urlInput,
+                            onInputChange = { urlInput = it },
+                            focusRequester = urlFocusRequester,
+                            onEnterEdit = {
+                                urlInput = tab?.url ?: ""
+                                urlEdit = true
+                            },
+                            onExitEdit = { urlEdit = false },
+                            onSubmit = {
+                                if (urlInput.isNotBlank()) {
+                                    controller.loadInSelectedTab(urlInput)
                                 }
-                            }
-                        },
-                        onMenu = { menuOpen = true },
-                    )
-                    if (controller.tabs.size > 1) {
-                        TabStripRow(
-                            tabs = controller.tabs,
-                            selectedId = controller.selectedId,
-                            onSelect = { controller.selectTab(it) },
-                            onClose = { controller.closeTab(it) },
+                                urlEdit = false
+                            },
+                            onReloadStop = {
+                                val s = tab?.session
+                                if (tab?.loading == true) s?.stop() else s?.reload()
+                            },
+                            onToggleBookmark = {
+                                val url = tab?.url
+                                if (url != null) {
+                                    if (app.library.isBookmarked(url)) {
+                                        app.library.removeBookmark(url)
+                                        controller.showSnackbar(bookmarkRemovedText)
+                                    } else {
+                                        app.library.addBookmark(
+                                            url,
+                                            tab.title.ifBlank { UrlUtils.titleFromUrl(url) },
+                                        )
+                                        controller.showSnackbar(bookmarkedText)
+                                    }
+                                }
+                            },
+                            onMenu = { menuOpen = true },
+                        )
+                        if (controller.tabs.size > 1) {
+                            TabStripRow(
+                                tabs = controller.tabs,
+                                selectedId = controller.selectedId,
+                                onSelect = { controller.selectTab(it) },
+                                onClose = { controller.closeTab(it) },
+                            )
+                        }
+                    }
+                }
+
+                // Web content, start page, progress bar and the find-in-page overlay.
+                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    GeckoSessionHost(tab = tab)
+
+                    if (tab == null || tab.url == null) {
+                        HomeContent(
+                            isPrivate = tab?.isPrivate == true,
+                            searchEngineLabel = app.settings.searchEngine.label,
+                            onSearch = { input -> controller.loadInSelectedTab(input) },
+                        )
+                    }
+
+                    if (tab?.loading == true) {
+                        LinearProgressIndicator(
+                            progress = { (tab.progress / 100f).coerceIn(0.02f, 1f) },
+                            modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = Color.Transparent,
+                        )
+                    }
+
+                    if (findBar.active) {
+                        FindBar(
+                            state = findBar,
+                            session = tab?.session,
+                            onClose = { closeFind() },
+                            modifier = Modifier.align(Alignment.BottomCenter),
                         )
                     }
                 }
-            }
 
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                GeckoSessionHost(tab = tab)
-
-                if (tab == null || tab.url == null) {
-                    HomeContent(
-                        isPrivate = tab?.isPrivate == true,
-                        searchEngineLabel = app.settings.searchEngine.label,
-                        onSearch = { input -> controller.loadInSelectedTab(input) },
+                // Bottom chrome: navigation + tabs + menu.
+                AnimatedVisibility(visible = !fullScreen) {
+                    BottomBar(
+                        canGoBack = tab?.canGoBack == true,
+                        canGoForward = tab?.canGoForward == true,
+                        tabCount = controller.tabs.size,
+                        onBack = { tab?.session?.goBack() },
+                        onForward = { tab?.session?.goForward() },
+                        onHome = { tab?.goHome() },
+                        onTabs = { screen = Screen.Tabs },
+                        onMenu = { menuOpen = true },
                     )
                 }
-
-                if (tab?.loading == true) {
-                    LinearProgressIndicator(
-                        progress = { (tab.progress / 100f).coerceIn(0.02f, 1f) },
-                        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = Color.Transparent,
-                    )
-                }
-
-                if (findBar.active) {
-                    FindBar(
-                        state = findBar,
-                        session = tab?.session,
-                        onClose = { closeFind() },
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = !fullScreen) {
-                BottomBar(
-                    canGoBack = tab?.canGoBack == true,
-                    canGoForward = tab?.canGoForward == true,
-                    tabCount = controller.tabs.size,
-                    onBack = { tab?.session?.goBack() },
-                    onForward = { tab?.session?.goForward() },
-                    onHome = { tab?.goHome() },
-                    onTabs = { screen = Screen.Tabs },
-                    onMenu = { menuOpen = true },
-                )
             }
         }
-    }
 
-    // Ctrl+F / menu "Find in page".
-    LaunchedEffect(controller.showFindBarRequest) {
-        if (controller.showFindBarRequest > 0) {
-            findBar.activate()
-        }
-    }
-
-    if (menuOpen) {
-        MainMenu(
-            app = app,
-            tab = tab,
-            onDismiss = { menuOpen = false },
-            onNavigate = { target ->
-                menuOpen = false
-                screen = target
-            },
-            onFindInPage = {
-                menuOpen = false
+        // Ctrl+F / menu "Find in page".
+        LaunchedEffect(controller.showFindBarRequest) {
+            if (controller.showFindBarRequest > 0) {
                 findBar.activate()
-            },
-        )
-    }
+            }
+        }
 
-    when (screen) {
-        Screen.Tabs -> TabsTrayScreen(app = app, onClose = { screen = Screen.Browser })
-        Screen.Extensions -> ExtensionsScreen(app = app, onClose = { screen = Screen.Browser })
-        Screen.Proxy -> ProxyScreen(app = app, onClose = { screen = Screen.Browser })
-        Screen.Settings -> SettingsScreen(app = app, onClose = { screen = Screen.Browser })
-        Screen.Library -> LibraryScreen(app = app, onClose = { screen = Screen.Browser })
-        Screen.Browser -> Unit
-    }
+        if (menuOpen) {
+            MainMenu(
+                app = app,
+                tab = tab,
+                onDismiss = { menuOpen = false },
+                onNavigate = { target ->
+                    menuOpen = false
+                    screen = target
+                },
+                onFindInPage = {
+                    menuOpen = false
+                    findBar.activate()
+                },
+            )
+        }
 
-    // Dialog layer -----------------------------------------------------
+        when (screen) {
+            Screen.Tabs -> TabsTrayScreen(app = app, onClose = { screen = Screen.Browser })
+            Screen.Extensions -> ExtensionsScreen(app = app, onClose = { screen = Screen.Browser })
+            Screen.Proxy -> ProxyScreen(app = app, onClose = { screen = Screen.Browser })
+            Screen.Settings -> SettingsScreen(app = app, onClose = { screen = Screen.Browser })
+            Screen.Library -> LibraryScreen(app = app, onClose = { screen = Screen.Browser })
+            Screen.Browser -> Unit
+        }
 
-    controller.activePermission?.let { permission ->
-        PermissionDialog(
-            host = permission.host,
-            kind = permission.kind,
-            onAnswer = { controller.answerPermission(it) },
-        )
-    }
+        // Dialog layer -------------------------------------------------
 
-    val prompt = controller.activePrompt
-    if (prompt != null) {
-        PromptDialog(
-            prompt = prompt,
-            onDismiss = { controller.dismissPrompt() },
-        )
-    }
+        controller.activePermission?.let { permission ->
+            PermissionDialog(
+                host = permission.host,
+                kind = permission.kind,
+                onAnswer = { controller.answerPermission(it) },
+            )
+        }
 
-    controller.activeExtensionPrompt?.let { extPrompt ->
-        ExtensionPermissionDialog(
-            prompt = extPrompt,
-            onAnswer = { granted, privateMode ->
-                controller.answerExtensionPrompt(granted, privateMode)
-            },
-        )
-    }
+        val prompt = controller.activePrompt
+        if (prompt != null) {
+            PromptDialog(
+                prompt = prompt,
+                onDismiss = { controller.dismissPrompt() },
+            )
+        }
 
-    SnackbarHost(message = controller.snackbarMessage) { controller.consumeSnackbar() }
+        controller.activeExtensionPrompt?.let { extPrompt ->
+            ExtensionPermissionDialog(
+                prompt = extPrompt,
+                onAnswer = { granted, privateMode ->
+                    controller.answerExtensionPrompt(granted, privateMode)
+                },
+            )
+        }
+
+        SnackbarHost(message = controller.snackbarMessage) { controller.consumeSnackbar() }
     } // root Box
 }
 

@@ -1,6 +1,5 @@
 package io.github.sachintha82288.devbrowser.browser
 
-import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 
 /**

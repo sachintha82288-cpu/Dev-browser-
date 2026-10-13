@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main", "arena/**" ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assemble-debug:
+    name: assembleDebug
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Caches the Gradle user home (GeckoView is a big download).
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # The runner image ships the Android SDK with licences accepted, so AGP
+      # installs platform 36 / build-tools on demand. GeckoView comes from
+      # maven.mozilla.org (declared in settings.gradle.kts).
+      - name: Build debug APKs (per-ABI splits + universal)
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Upload debug APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: devbrowser-debug-apks
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.ActiveExtensionPrompt
 import io.github.sachintha82288.devbrowser.browser.TabsController
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +87,7 @@ class ExtensionManager(
             }
             if (resolved == null && !url.startsWith("http")) {
                 busy = false
-                controller.showSnackbar("Could not resolve add-on link")
+                controller.showSnackbar(appContext.getString(R.string.could_not_resolve_addon))
                 return@launch
             }
             install(resolved ?: url)
@@ -100,7 +101,7 @@ class ExtensionManager(
             val staged = withContext(Dispatchers.IO) { stageFile(uri) }
             if (staged == null) {
                 busy = false
-                controller.showSnackbar("Could not read the selected file")
+                controller.showSnackbar(appContext.getString(R.string.could_not_read_file))
                 return@launch
             }
             install("file://$staged", fromFile = true)
@@ -113,22 +114,31 @@ class ExtensionManager(
             if (method != null) extController.install(url, method) else extController.install(url)
         result.accept({ ext ->
             busy = false
-            controller.showSnackbar("${ext.metaData?.name ?: "Add-on"} installed")
+            controller.showSnackbar(
+                appContext.getString(
+                    R.string.extension_installed,
+                    ext.metaData?.name ?: ext.id,
+                ),
+            )
             refresh()
         }) { e ->
             busy = false
             val reason = if (e is WebExtension.InstallException) describeError(e) else (e.message ?: "unknown error")
-            controller.showSnackbar("Install failed: $reason")
+            controller.showSnackbar(appContext.getString(R.string.install_failed_reason, reason))
         }
     }
 
     fun uninstall(info: ExtensionInfo) {
         findExtension(info.id)?.let { ext ->
             extController.uninstall(ext).accept({
-                controller.showSnackbar("${info.name} removed")
+                controller.showSnackbar(
+                    appContext.getString(R.string.extension_uninstalled, info.name),
+                )
                 refresh()
             }) { e ->
-                controller.showSnackbar("Uninstall failed: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.uninstall_failed_reason, e.message ?: ""),
+                )
             }
         }
     }
@@ -141,7 +151,9 @@ class ExtensionManager(
                 extController.disable(ext, WebExtensionController.EnableSource.USER)
             }
             result.accept({ refresh() }) { e ->
-                controller.showSnackbar("Could not change add-on: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.addon_change_failed, e.message ?: ""),
+                )
             }
         }
     }
@@ -151,7 +163,9 @@ class ExtensionManager(
             extController.setAllowedInPrivateBrowsing(ext, allowed).accept({
                 refresh()
             }) { e ->
-                controller.showSnackbar("Could not change add-on: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.addon_change_failed, e.message ?: ""),
+                )
             }
         }
     }
@@ -162,14 +176,23 @@ class ExtensionManager(
             extController.update(ext).accept({ updated ->
                 busy = false
                 if (updated == null || updated.metaData?.version == info.version) {
-                    controller.showSnackbar("No update available")
+                    controller.showSnackbar(
+                        appContext.getString(R.string.extension_update_no_update),
+                    )
                 } else {
-                    controller.showSnackbar("Updated to ${updated.metaData?.version}")
+                    controller.showSnackbar(
+                        appContext.getString(
+                            R.string.updated_to_version,
+                            updated.metaData?.version ?: "",
+                        ),
+                    )
                 }
                 refresh()
             }) { e ->
                 busy = false
-                controller.showSnackbar("Update check failed: ${e.message}")
+                controller.showSnackbar(
+                    appContext.getString(R.string.update_check_failed, e.message ?: ""),
+                )
             }
         }
     }

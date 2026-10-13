@@ -1,5 +1,6 @@
 [versions]
-agp = "8.8.2"
+# API level 36 (Android 16) needs AGP 8.9.1+; 8.10.1 is the tested pairing with Gradle 8.12.
+agp = "8.10.1"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
