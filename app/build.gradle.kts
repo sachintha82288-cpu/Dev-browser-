@@ -9,10 +9,16 @@ plugins {
 
 android {
     namespace = "io.github.sachintha82288.devbrowser"
-    // GeckoView 157 pulls in androidx.core 1.19 / lifecycle 2.11, whose AAR
-    // metadata requires compiling against API 37. targetSdk stays at 36 so the
-    // app keeps the runtime behaviour it was written for.
-    compileSdk = 37
+    // GeckoView 157 was built against Android 17 (API 37.1) and its AAR
+    // metadata makes that a hard floor for anything that depends on it, so the
+    // minor API level has to be spelled out. targetSdk stays at 36: compiling
+    // against a newer platform does not opt the app into new runtime behaviour.
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
+    buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "io.github.sachintha82288.devbrowser"

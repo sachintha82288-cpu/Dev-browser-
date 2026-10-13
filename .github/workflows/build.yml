@@ -36,7 +36,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       # The runner image ships the Android SDK with licences accepted, so AGP
-      # installs platform 37 / build-tools on demand. GeckoView comes from
+      # installs platform android-37.1 and build-tools 37.0.0 on demand.
+      # GeckoView comes from
       # maven.mozilla.org (declared in settings.gradle.kts).
       - name: Build debug APKs (per-ABI splits + universal)
         id: build
