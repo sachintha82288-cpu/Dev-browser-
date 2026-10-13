@@ -55,7 +55,8 @@ match the platform.
 
 ```bash
 ./gradlew assembleDebug        # debug APK (per-ABI splits + universal)
-./gradlew assembleRelease      # minified release
+./gradlew assembleRelease      # minified release (unsigned: no key lives in this repo)
+./gradlew testDebugUnitTest    # JVM unit tests
 ```
 
 Requires the [Android SDK](https://developer.android.com/studio) with platform `android-37.1`,
@@ -63,10 +64,12 @@ build-tools 37.0.0 and JDK 17.
 GeckoView is fetched from `maven.mozilla.org` automatically — it is a ~230 MB download, so the
 first build takes a while.
 
-A GitHub Actions workflow (`.github/workflows/build.yml`) builds `assembleDebug` on every push
-and pull request, posts any Kotlin/AGP error straight onto the pull request, and uploads the
-`arm64-v8a` debug APK (the other ABIs are built too, but a GeckoView APK is ~100 MB each, so
-only one is kept as an artifact).
+A GitHub Actions workflow (`.github/workflows/build.yml`) runs two jobs on every push and pull
+request — `Debug` (`testDebugUnitTest` + `assembleDebug`) and `Release` (`assembleRelease`, so R8
+and the keep rules stay covered) — with `fail-fast` off, so a problem in one cannot hide a healthy
+other. Any Kotlin/AGP/R8 error is posted straight onto the pull request. The `arm64-v8a` debug APK
+is uploaded as an artifact (~110 MB; the other ABIs are built too, but a GeckoView APK is ~100 MB
+each, so only one is kept).
 
 ## Project layout
 
@@ -81,6 +84,8 @@ app/src/main/java/io/github/sachintha82288/devbrowser/
 ├── proxy/                     # ProxyPrefs (Tor + manual proxy pref mapping)
 ├── util/                      # URL utilities
 └── ui/                        # Compose screens (browser, tabs, prompts, menus, settings…)
+
+app/src/test/java/…/util/UrlUtilsTest.kt   # address-bar heuristics (load vs. search, http vs. https)
 ```
 
 All Gecko preferences DevBrowser owns are composed in `browser/StartupPrefs.kt`

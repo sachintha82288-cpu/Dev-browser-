@@ -53,16 +53,16 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail
-          ./gradlew --no-daemon --no-build-cache ${{ matrix.tasks }} 2>&1 | tee build.log
+          ./gradlew --no-daemon ${{ matrix.tasks }} 2>&1 | tee build.log
 
       # Kotlin/AGP/R8 errors are much easier to act on in the PR than in a log tab.
       - name: Report build errors on the pull request
-        if: github.event_name == 'pull_request'
+        if: steps.build.outcome == 'failure' && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           {
-            echo "### assemble${{ matrix.variant }}: \`${{ steps.build.outcome }}\`"
+            echo "### :x: \`assemble${{ matrix.variant }}\` failed"
             echo
             echo '```'
             grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Missing class|R8:|Deprecated Gradle|requires Android Gradle plugin|compile against version|FAILED|There were failing tests|expected:|AssertionError" build.log | head -n 150
@@ -71,7 +71,7 @@ jobs:
             echo "<details><summary>compiler warnings ($(grep -cE '^w: ' build.log))</summary>"
             echo
             echo '```'
-            grep -E "^w: " build.log | sort | uniq -c | sort -rn | head -n 80
+            grep -E "^w: " build.log | sort | uniq -c | sort -rn | head -n 60
             echo '```'
             echo
             echo "</details>"
