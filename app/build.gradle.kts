@@ -97,4 +97,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // UrlUtils' address-bar heuristics are pure string logic, so they are
+    // covered by plain JVM tests (src/test).
+    testImplementation(libs.junit)
 }

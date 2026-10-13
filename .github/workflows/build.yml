@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   assemble:
-    name: assemble${{ matrix.variant }}
+    name: build ${{ matrix.variant }}
     runs-on: ubuntu-latest
     # GeckoView is a ~230 MB AAR and R8 has to walk all of it, so give both
     # variants room instead of relying on the 6 hour default.
@@ -25,7 +25,11 @@ jobs:
       # A failing release build must not hide a healthy debug build.
       fail-fast: false
       matrix:
-        variant: [ Debug, Release ]
+        include:
+          - variant: Debug
+            tasks: testDebugUnitTest assembleDebug
+          - variant: Release
+            tasks: assembleRelease
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -44,12 +48,12 @@ jobs:
       # installs platform android-37.1 and build-tools 37.0.0 on demand.
       # GeckoView comes from maven.mozilla.org (declared in settings.gradle.kts).
       # Release builds come out unsigned: no signing key lives in this repo.
-      - name: Build APKs (per-ABI splits + universal)
+      - name: Run the unit tests and build APKs (per-ABI splits + universal)
         id: build
         continue-on-error: true
         run: |
           set -o pipefail
-          ./gradlew --no-daemon --no-build-cache assemble${{ matrix.variant }} 2>&1 | tee build.log
+          ./gradlew --no-daemon --no-build-cache ${{ matrix.tasks }} 2>&1 | tee build.log
 
       # Kotlin/AGP/R8 errors are much easier to act on in the PR than in a log tab.
       - name: Report build errors on the pull request
@@ -61,7 +65,7 @@ jobs:
             echo "### assemble${{ matrix.variant }}: \`${{ steps.build.outcome }}\`"
             echo
             echo '```'
-            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Missing class|R8:|Deprecated Gradle|requires Android Gradle plugin|compile against version" build.log | head -n 150
+            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Missing class|R8:|Deprecated Gradle|requires Android Gradle plugin|compile against version|FAILED|There were failing tests|expected:|AssertionError" build.log | head -n 150
             echo '```'
             echo
             echo "<details><summary>compiler warnings ($(grep -cE '^w: ' build.log))</summary>"

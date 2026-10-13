@@ -13,6 +13,7 @@ composeBom = "2026.09.00"
 annotation = "1.10.0"
 coroutines = "1.11.0"
 geckoview = "157.0.20260924084938"
+junit = "4.13.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +30,7 @@ androidx-compose-material-icons = { group = "androidx.compose.material", name = 
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 mozilla-geckoview = { group = "org.mozilla.geckoview", name = "geckoview-omni", version.ref = "geckoview" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
