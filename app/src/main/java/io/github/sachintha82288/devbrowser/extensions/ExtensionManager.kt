@@ -182,7 +182,7 @@ class ExtensionManager(
             busy = true
             extController.update(ext).accept({ updated ->
                 busy = false
-                if (updated == null || updated.metaData?.version == info.version) {
+                if (updated == null || updated.metaData.version == info.version) {
                     controller.showSnackbar(
                         appContext.getString(R.string.extension_update_no_update),
                     )
@@ -190,7 +190,7 @@ class ExtensionManager(
                     controller.showSnackbar(
                         appContext.getString(
                             R.string.updated_to_version,
-                            updated.metaData?.version ?: "",
+                            updated.metaData.version,
                         ),
                     )
                 }
@@ -283,13 +283,13 @@ class ExtensionManager(
         val meta = metaData
         return ExtensionInfo(
             id = id,
-            name = meta?.name ?: id,
-            version = meta?.version ?: "",
-            description = meta?.description ?: "",
-            enabled = meta?.enabled ?: true,
-            allowedInPrivateBrowsing = meta?.allowedInPrivateBrowsing ?: false,
-            optionsPageUrl = meta?.optionsPageUrl,
-            homepageUrl = meta?.homepageUrl,
+            name = meta.name ?: id,
+            version = meta.version,
+            description = meta.description ?: "",
+            enabled = meta.enabled,
+            allowedInPrivateBrowsing = meta.allowedInPrivateBrowsing,
+            optionsPageUrl = meta.optionsPageUrl,
+            homepageUrl = meta.homepageUrl,
         )
     }
 
@@ -305,7 +305,7 @@ class ExtensionManager(
             val result = GeckoResult<WebExtension.PermissionPromptResponse>()
             controller.showExtensionPrompt(
                 ActiveExtensionPrompt(
-                    extensionName = extension.metaData?.name ?: extension.id,
+                    extensionName = extension.metaData.name ?: extension.id,
                     permissions = permissions.toList() + origins.map { "access: $it" },
                     isUpdate = false,
                     onAnswer = { granted, privateGranted ->
@@ -331,7 +331,7 @@ class ExtensionManager(
             val result = GeckoResult<AllowOrDeny>()
             controller.showExtensionPrompt(
                 ActiveExtensionPrompt(
-                    extensionName = extension.metaData?.name ?: extension.id,
+                    extensionName = extension.metaData.name ?: extension.id,
                     permissions = newPermissions.toList() + newOrigins.map { "access: $it" },
                     isUpdate = true,
                     onAnswer = { granted, _ ->
