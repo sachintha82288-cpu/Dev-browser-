@@ -23,8 +23,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Lock
@@ -362,7 +362,7 @@ private fun UrlBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onExitEdit) {
-                    Icon(Icons.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
                 }
                 OutlinedTextField(
                     value = urlInput,
@@ -490,10 +490,10 @@ private fun BottomBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack, enabled = canGoBack) {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
             }
             IconButton(onClick = onForward, enabled = canGoForward) {
-                Icon(Icons.Rounded.ArrowForward, contentDescription = stringResource(R.string.forward))
+                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = stringResource(R.string.forward))
             }
             IconButton(onClick = onHome) {
                 Icon(Icons.Rounded.Home, contentDescription = stringResource(R.string.home))

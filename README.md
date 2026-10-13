@@ -37,12 +37,18 @@ An Android web browser built for **developers**, powered by **Firefox (GeckoView
 | Piece      | Choice |
 |------------|--------|
 | Engine     | `org.mozilla.geckoview:geckoview-omni:157.0.20260924084938` |
-| UI         | Jetpack Compose (BOM 2024.12.01), Material 3 |
-| Build      | AGP 8.10.1, Kotlin 2.0.21, Gradle 8.12.1, JDK 17 |
-| Min / Target SDK | 26 / 36 |
+| UI         | Jetpack Compose (BOM 2026.09.00), Material 3 |
+| Build      | AGP 9.4.1 (built-in Kotlin), Kotlin 2.4.20, Gradle 9.8.1, JDK 17 |
+| Min / Compile / Target SDK | 26 / 37 / 36 |
 | Package    | `io.github.sachintha82288.devbrowser` |
 
-API level 36 needs AGP 8.9.1 or newer, hence AGP 8.10.1 with the Gradle 8.12.1 wrapper.
+The toolchain floor is set by GeckoView, not by the app: `geckoview-omni:157` depends on
+`androidx.core:core:1.19.0` and `androidx.lifecycle:*:2.11.0`, and those AARs carry metadata
+that refuses to build against anything older than **compileSdk 37 with AGP 9.1+**. AGP 9.4.1
+plus the Gradle 9.8.1 wrapper is the current stable pairing, and 2.4.20 is the Kotlin GeckoView
+157 was built with. AGP 9 compiles Kotlin itself, so `org.jetbrains.kotlin.android` is no longer
+applied — only the Compose compiler plugin is. `targetSdk` stays at 36, so compiling against 37
+does not change how the app behaves on a device.
 
 ## Build
 
@@ -51,11 +57,14 @@ API level 36 needs AGP 8.9.1 or newer, hence AGP 8.10.1 with the Gradle 8.12.1 w
 ./gradlew assembleRelease      # minified release
 ```
 
-Requires the [Android SDK](https://developer.android.com/studio) with platform 36.
-GeckoView is fetched from `maven.mozilla.org` automatically.
+Requires the [Android SDK](https://developer.android.com/studio) with platform 37 and JDK 17.
+GeckoView is fetched from `maven.mozilla.org` automatically — it is a ~230 MB download, so the
+first build takes a while.
 
-A GitHub Actions workflow (`.github/workflows/build.yml`) builds `assembleDebug` on every
-push and pull request and uploads the APKs as artifacts.
+A GitHub Actions workflow (`.github/workflows/build.yml`) builds `assembleDebug` on every push
+and pull request, posts any Kotlin/AGP error straight onto the pull request, and uploads the
+`arm64-v8a` debug APK (the other ABIs are built too, but a GeckoView APK is ~100 MB each, so
+only one is kept as an artifact).
 
 ## Project layout
 

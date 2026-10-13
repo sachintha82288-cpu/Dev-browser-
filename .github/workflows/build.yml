@@ -18,6 +18,9 @@ jobs:
   assemble-debug:
     name: assembleDebug
     runs-on: ubuntu-latest
+    # GeckoView is a ~230 MB AAR and dexing it takes a while, so give the job
+    # room instead of relying on the 6 hour default.
+    timeout-minutes: 45
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -33,7 +36,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       # The runner image ships the Android SDK with licences accepted, so AGP
-      # installs platform 36 / build-tools on demand. GeckoView comes from
+      # installs platform 37 / build-tools on demand. GeckoView comes from
       # maven.mozilla.org (declared in settings.gradle.kts).
       - name: Build debug APKs (per-ABI splits + universal)
         id: build
@@ -52,13 +55,21 @@ jobs:
             echo "### :x: \`assembleDebug\` failed"
             echo
             echo '```'
-            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Deprecated Gradle" build.log | head -n 150
+            grep -E "^e: |^FAILURE|What went wrong|Caused by:|Execution failed for task|error:|A problem occurred|Deprecated Gradle|requires Android Gradle plugin|compile against version" build.log | head -n 150
             echo '```'
+            echo
+            echo "<details><summary>compiler warnings ($(grep -cE '^w: ' build.log))</summary>"
+            echo
+            echo '```'
+            grep -E "^w: " build.log | head -n 40
+            echo '```'
+            echo
+            echo "</details>"
             echo
             echo "<details><summary>tail of the Gradle log</summary>"
             echo
             echo '```'
-            tail -n 60 build.log
+            tail -n 80 build.log
             echo '```'
             echo
             echo "</details>"
@@ -74,14 +85,25 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Upload debug APKs
+      - name: List the APKs that were produced
+        if: steps.build.outcome == 'success'
+        run: |
+          cd app/build/outputs/apk/debug
+          ls -lh *.apk
+          sha256sum *.apk
+
+      # Only the arm64-v8a APK is uploaded: a GeckoView APK is ~100 MB per ABI
+      # and the universal one is several times that, which would blow straight
+      # through the Actions storage quota. Build the other ABIs locally with
+      # ./gradlew assembleDebug (see README).
+      - name: Upload the arm64-v8a debug APK
         if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: devbrowser-debug-apks
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
-          retention-days: 14
+          name: devbrowser-debug-arm64-v8a
+          path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Fail the job when the build failed
         if: steps.build.outcome == 'failure'

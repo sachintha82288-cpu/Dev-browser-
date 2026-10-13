@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.VisibilityOff
@@ -100,7 +100,7 @@ fun ScreenHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
             }
             Text(
                 text = title,

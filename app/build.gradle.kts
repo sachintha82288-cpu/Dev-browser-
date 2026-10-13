@@ -1,12 +1,18 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // Kotlin itself is compiled by AGP 9's built-in Kotlin support; only the
+    // Compose compiler plugin has to be applied here.
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "io.github.sachintha82288.devbrowser"
-    compileSdk = 36
+    // GeckoView 157 pulls in androidx.core 1.19 / lifecycle 2.11, whose AAR
+    // metadata requires compiling against API 37. targetSdk stays at 36 so the
+    // app keeps the runtime behaviour it was written for.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "io.github.sachintha82288.devbrowser"
@@ -51,14 +57,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+// kotlinOptions is gone in AGP 9; the built-in Kotlin compiler is configured
+// through the top-level kotlin extension instead.
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
