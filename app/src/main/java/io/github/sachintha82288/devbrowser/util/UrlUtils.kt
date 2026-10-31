@@ -41,6 +41,42 @@ object UrlUtils {
         return trimmed
     }
 
+    /**
+     * Stage A: removes common campaign/click identifiers before a link is
+     * opened. Unknown query parameters and fragments are preserved.
+     */
+    fun stripTrackingParams(url: String): String {
+        return try {
+            val uri = Uri.parse(url)
+            val scheme = uri.scheme?.lowercase(Locale.US) ?: return url
+            if (scheme != "http" && scheme != "https") return url
+            val names = uri.queryParameterNames
+            if (names.isEmpty()) return url
+            val dropped = names.filter { isTrackingParam(it) }
+            if (dropped.isEmpty()) return url
+            val builder = uri.buildUpon().clearQuery()
+            names.forEach { name ->
+                if (isTrackingParam(name)) return@forEach
+                uri.getQueryParameters(name).forEach { value -> builder.appendQueryParameter(name, value) }
+            }
+            builder.build().toString()
+        } catch (_: Exception) {
+            url
+        }
+    }
+
+    private val TRACKING_PARAMS = setOf(
+        "fbclid", "gclid", "gclsrc", "dclid", "msclkid", "yclid", "twclid",
+        "igshid", "mc_cid", "mc_eid", "_hsenc", "_hsmi", "vero_id", "wickedid",
+        "oly_anon_id", "oly_enc_id", "rb_clickid", "s_cid", "mkt_tok", "trk",
+        "sc_cid", "ref_src", "ref_url", "cmpid", "campaign_id",
+    )
+
+    private fun isTrackingParam(name: String): Boolean {
+        val key = name.lowercase(Locale.US)
+        return key.startsWith("utm_") || TRACKING_PARAMS.contains(key)
+    }
+
     fun searchUrl(query: String, template: String): String =
         template.replace("%s", Uri.encode(query))
 

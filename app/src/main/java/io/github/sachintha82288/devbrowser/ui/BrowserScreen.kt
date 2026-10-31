@@ -49,12 +49,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,6 +66,11 @@ import io.github.sachintha82288.devbrowser.DevBrowserApplication
 import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.ActivePrompt
 import io.github.sachintha82288.devbrowser.browser.BrowserTab
+import io.github.sachintha82288.devbrowser.browser.PageCapture
+import io.github.sachintha82288.devbrowser.browser.PageExporter
+import io.github.sachintha82288.devbrowser.browser.ReaderArticle
+import io.github.sachintha82288.devbrowser.browser.ReaderMode
+import io.github.sachintha82288.devbrowser.debug.DebugBridge
 import io.github.sachintha82288.devbrowser.ui.components.FindBar
 import io.github.sachintha82288.devbrowser.ui.components.FindBarState
 import io.github.sachintha82288.devbrowser.ui.components.TabChip
@@ -72,11 +79,12 @@ import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
 import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.TextSecondary
 import io.github.sachintha82288.devbrowser.util.UrlUtils
+import kotlinx.coroutines.launch
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoView
 
 /** Full-screen overlays navigated from the browser chrome. */
-enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library, Debug }
+enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library, Debug, Reader }
 
 @Composable
 fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
@@ -85,11 +93,17 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
 
     var screen by remember { mutableStateOf(Screen.Browser) }
     var menuOpen by remember { mutableStateOf(false) }
+    var zoomOpen by remember { mutableStateOf(false) }
+    var qrOpen by remember { mutableStateOf(false) }
+    var readerArticle by remember { mutableStateOf<ReaderArticle?>(null) }
     var urlEdit by remember { mutableStateOf(false) }
     var urlInput by remember { mutableStateOf("") }
     val findBar = rememberFindBarState()
 
     val urlFocusRequester = remember { FocusRequester() }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var captureBusy by remember { mutableStateOf(false) }
     val contextBookmarkAdded = stringResource(R.string.bookmark_added)
     val contextBookmarkRemoved = stringResource(R.string.bookmark_removed)
 
@@ -255,6 +269,22 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
         }
     }
 
+    // Stage A: reader mode is requested from the menu; extraction happens here
+    // so the menu itself stays a pure navigation surface.
+    LaunchedEffect(controller.readerModeRequest) {
+        if (controller.readerModeRequest <= 0) return@LaunchedEffect
+        val target = tab ?: return@LaunchedEffect
+        DebugBridge.evalJson(target.session, ReaderMode.extractScript) { payload ->
+            val parsed = ReaderMode.parse(payload, target.url)
+            if (parsed == null) {
+                controller.showSnackbar(context.getString(R.string.reader_empty))
+            } else {
+                readerArticle = parsed
+                screen = Screen.Reader
+            }
+        }
+    }
+
     // Ctrl+F / menu "Find in page".
     LaunchedEffect(controller.showFindBarRequest) {
         if (controller.showFindBarRequest > 0) {
@@ -275,7 +305,58 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
                 menuOpen = false
                 findBar.activate()
             },
+            onZoom = {
+                menuOpen = false
+                zoomOpen = true
+            },
+            onScreenshot = {
+                menuOpen = false
+                val target = tab
+                if (target != null && !captureBusy) {
+                    captureBusy = true
+                    scope.launch {
+                        val saved = PageExporter.saveScreenshot(context, target.session, fullPage = true)
+                        captureBusy = false
+                        controller.showSnackbar(
+                            if (saved != null) context.getString(R.string.capture_saved, saved)
+                            else context.getString(R.string.capture_failed),
+                        )
+                    }
+                }
+            },
+            onQr = {
+                menuOpen = false
+                qrOpen = true
+            },
+            onSavePdf = {
+                menuOpen = false
+                val target = tab
+                if (target != null && !captureBusy) {
+                    captureBusy = true
+                    scope.launch {
+                        val saved = PageExporter.savePdf(context, target.session)
+                        captureBusy = false
+                        controller.showSnackbar(
+                            if (saved != null) context.getString(R.string.capture_saved, saved)
+                            else context.getString(R.string.capture_failed),
+                        )
+                    }
+                }
+            },
         )
+    }
+
+    if (zoomOpen && tab != null) {
+        ZoomDialog(app = app, tab = tab, onDismiss = { zoomOpen = false })
+    }
+
+    if (qrOpen) {
+        val url = tab?.url
+        if (url != null) {
+            QrDialog(url = url, onDismiss = { qrOpen = false })
+        } else {
+            qrOpen = false
+        }
     }
 
     when (screen) {
@@ -286,6 +367,10 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
         Screen.Library -> LibraryScreen(app = app, onClose = { screen = Screen.Browser })
         Screen.Debug -> io.github.sachintha82288.devbrowser.ui.debug.DebugSuiteScreen(
             app = app,
+            onClose = { screen = Screen.Browser },
+        )
+        Screen.Reader -> ReaderScreen(
+            article = readerArticle,
             onClose = { screen = Screen.Browser },
         )
         Screen.Browser -> Unit
@@ -327,7 +412,9 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
 private fun GeckoSessionHost(tab: BrowserTab?) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
-        factory = { context -> GeckoView(context) },
+        factory = { context ->
+            GeckoView(context).also { created -> PageCapture.view = created }
+        },
         update = { view ->
             val session = tab?.session
             val attached = view.tag as? GeckoSession

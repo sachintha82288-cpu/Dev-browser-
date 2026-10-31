@@ -22,21 +22,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteSweep
+import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.sachintha82288.devbrowser.DevBrowserApplication
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.BrowserTab
 import io.github.sachintha82288.devbrowser.ui.components.ScreenHeader
 import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
+import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.NeonPurple
 import io.github.sachintha82288.devbrowser.util.UrlUtils
 
@@ -44,6 +53,12 @@ import io.github.sachintha82288.devbrowser.util.UrlUtils
 @Composable
 fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
     val controller = app.tabs
+    var query by remember { mutableStateOf("") }
+    val visibleTabs = controller.orderedTabs().filter { tab ->
+        if (query.isBlank()) return@filter true
+        val needle = query.lowercase()
+        tab.title.lowercase().contains(needle) || (tab.url ?: "").lowercase().contains(needle)
+    }
 
     Box(
         modifier = Modifier
@@ -64,13 +79,31 @@ fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                 },
             )
 
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = { Text(stringResource(R.string.tabs_search_hint), style = MonoTextStyle) },
+                singleLine = true,
+                textStyle = MonoTextStyle,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+            )
+
+            if (visibleTabs.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.tabs_search_empty),
+                    style = MonoTextStyle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize().padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(controller.tabs, key = { it.id }) { tab ->
+                items(visibleTabs, key = { it.id }) { tab ->
                     TabCard(
                         tab = tab,
                         isSelected = tab.id == controller.selectedId,
@@ -79,6 +112,7 @@ fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                             onClose()
                         },
                         onClose = { controller.closeTab(tab.id) },
+                        onTogglePin = { controller.togglePinned(tab.id) },
                     )
                 }
             }
@@ -135,6 +169,7 @@ private fun TabCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     onClose: () -> Unit,
+    onTogglePin: () -> Unit,
 ) {
     Surface(
         shape = RoundedCornerShape(14.dp),
@@ -166,6 +201,16 @@ private fun TabCard(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
                 )
+                IconButton(onClick = onTogglePin, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        Icons.Rounded.PushPin,
+                        contentDescription = stringResource(
+                            if (tab.isPinned) R.string.tab_unpin else R.string.tab_pin,
+                        ),
+                        tint = if (tab.isPinned) NeonCyan else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(14.dp),
+                    )
+                }
                 IconButton(onClick = onClose, modifier = Modifier.size(24.dp)) {
                     Icon(
                         Icons.Rounded.Close,
@@ -173,6 +218,14 @@ private fun TabCard(
                         modifier = Modifier.size(15.dp),
                     )
                 }
+            }
+            if (tab.isSleeping) {
+                Text(
+                    text = stringResource(R.string.tab_sleeping),
+                    style = MonoTextStyle,
+                    color = NeonCyan,
+                    maxLines = 1,
+                )
             }
             if (tab.loading) {
                 Text(

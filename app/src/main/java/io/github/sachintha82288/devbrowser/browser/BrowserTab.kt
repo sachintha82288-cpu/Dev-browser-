@@ -38,6 +38,15 @@ class BrowserTab(
     /** Leaf TLS certificate reported by the engine (debug suite, feature 65). */
     var certificate by mutableStateOf<CertificateInfo?>(null)
 
+    /** Stage A: pinned tabs stay first in the tray and survive tab-close sweeps. */
+    var isPinned: Boolean by mutableStateOf(false)
+
+    /** Stage A: inactive tabs are deactivated to release engine resources. */
+    var isSleeping: Boolean by mutableStateOf(false)
+
+    /** Stage A: per-site zoom in percent, 100 = unchanged. */
+    var zoomPercent: Int by mutableStateOf(100)
+
     fun goHome() {
         url = null
         title = ""

@@ -45,6 +45,14 @@ class AppSettings(context: Context) {
         get() = _restoreTabs
         set(value) { _restoreTabs = value; prefs.edit().putBoolean("restore_tabs", value).apply() }
 
+    /** Stage A: drop utm_ and fbclid-style parameters from links before loading. */
+    var stripTrackingParams: Boolean
+        get() = _stripTrackingParams
+        set(value) {
+            _stripTrackingParams = value
+            prefs.edit().putBoolean("strip_tracking_params", value).apply()
+        }
+
     // --- Privacy & security ----------------------------------------------
 
     var trackingProtection: TrackingProtectionLevel
@@ -143,6 +151,7 @@ class AppSettings(context: Context) {
 
     private var _searchEngine by mutableStateOf(enumPref("search_engine", SearchEngine.DUCKDUCKGO, SearchEngine.entries))
     private var _restoreTabs by mutableStateOf(prefs.getBoolean("restore_tabs", true))
+    private var _stripTrackingParams by mutableStateOf(prefs.getBoolean("strip_tracking_params", true))
 
     private var _trackingProtection by mutableStateOf(enumPref("tracking_protection", TrackingProtectionLevel.STANDARD, TrackingProtectionLevel.entries))
     private var _httpsOnly by mutableStateOf(prefs.getBoolean("https_only", false))

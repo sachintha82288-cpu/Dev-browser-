@@ -15,12 +15,18 @@ import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.FindInPage
+import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.MenuBook
+import androidx.compose.material.icons.rounded.Screenshot
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material.icons.rounded.ZoomIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +52,10 @@ fun MainMenu(
     onDismiss: () -> Unit,
     onNavigate: (Screen) -> Unit,
     onFindInPage: () -> Unit,
+    onZoom: () -> Unit = {},
+    onScreenshot: () -> Unit = {},
+    onSavePdf: () -> Unit = {},
+    onQr: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
@@ -69,6 +79,30 @@ fun MainMenu(
             }
             MenuRow(Icons.Rounded.Search, stringResource(R.string.find_in_page)) {
                 onFindInPage()
+            }
+            if (tab?.url != null) {
+                MenuRow(Icons.Rounded.MenuBook, stringResource(R.string.menu_reader)) {
+                    app.tabs.requestReaderMode()
+                    onDismiss()
+                }
+                MenuRow(Icons.Rounded.ZoomIn, stringResource(R.string.menu_zoom)) {
+                    onZoom()
+                }
+                MenuRow(Icons.Rounded.History, stringResource(R.string.menu_recently_closed)) {
+                    if (!app.tabs.reopenLastClosed()) {
+                        app.tabs.showSnackbar(context.getString(R.string.recently_closed_empty))
+                    }
+                    onDismiss()
+                }
+                MenuRow(Icons.Rounded.Screenshot, stringResource(R.string.menu_screenshot)) {
+                    onScreenshot()
+                }
+                MenuRow(Icons.Rounded.PictureAsPdf, stringResource(R.string.menu_save_pdf)) {
+                    onSavePdf()
+                }
+                MenuRow(Icons.Rounded.QrCode2, stringResource(R.string.menu_qr)) {
+                    onQr()
+                }
             }
             MenuRow(
                 Icons.Rounded.DesktopWindows,

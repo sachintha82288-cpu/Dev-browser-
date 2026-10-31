@@ -37,6 +37,55 @@ object FileExport {
         null
     }
 
+    /** Binary variant used by the Stage A screenshot/PDF exporters. */
+    fun saveBytes(
+        context: Context,
+        fileName: String,
+        mimeType: String,
+        bytes: ByteArray,
+    ): String? {
+        return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val values = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(MediaStore.Downloads.MIME_TYPE, mimeType)
+                put(
+                    MediaStore.Downloads.RELATIVE_PATH,
+                    Environment.DIRECTORY_DOWNLOADS + "/DevBrowser",
+                )
+                put(MediaStore.Downloads.IS_PENDING, 1)
+            }
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+            if (uri == null) {
+                null
+            } else {
+                resolver.openOutputStream(uri)?.use { stream -> stream.write(bytes) }
+                val publish = ContentValues().apply { put(MediaStore.Downloads.IS_PENDING, 0) }
+                resolver.update(uri, publish, null, null)
+                "Downloads/DevBrowser/$fileName"
+            }
+        } else {
+            val root = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+            if (root == null) {
+                null
+            } else {
+                val dir = File(root, "DevBrowser")
+                if (!dir.exists() && !dir.mkdirs()) {
+                    null
+                } else {
+                    val file = File(dir, fileName)
+                    file.writeBytes(bytes)
+                    file.absolutePath
+                }
+            }
+        }
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not export $fileName", e)
+            null
+        }
+    }
+
     private fun saveWithMediaStore(
         context: Context,
         fileName: String,

@@ -100,6 +100,17 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                     )
                 },
             )
+            SettingRow(
+                icon = Icons.Rounded.Search,
+                title = stringResource(R.string.setting_strip_tracking),
+                subtitle = stringResource(R.string.setting_strip_tracking_sub),
+                trailing = {
+                    Switch(
+                        checked = settings.stripTrackingParams,
+                        onCheckedChange = { settings.stripTrackingParams = it },
+                    )
+                },
+            )
 
             HorizontalDivider()
             SectionLabel(stringResource(R.string.privacy_security))

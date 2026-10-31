@@ -106,6 +106,8 @@ class BrowserDelegates(
 
     override fun onPageStop(session: GeckoSession, success: Boolean) {
         tab.loading = false
+        // Stage A: restore the per-site zoom level for this host.
+        controller.applyPerSiteZoom(tab)
         controller.pageLifecycleListener?.invoke(tab, false)
     }
 

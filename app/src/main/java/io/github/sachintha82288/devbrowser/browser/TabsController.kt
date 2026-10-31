@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.sachintha82288.devbrowser.data.AppSettings
 import io.github.sachintha82288.devbrowser.data.Library
+import io.github.sachintha82288.devbrowser.data.ZoomStore
 import io.github.sachintha82288.devbrowser.downloads.Downloader
 import io.github.sachintha82288.devbrowser.util.UrlUtils
 import org.json.JSONArray
@@ -57,6 +58,18 @@ class TabsController(
     /** Incremented when the UI should focus the URL bar (Ctrl+L). */
     var focusUrlBarRequest: Int by mutableStateOf(0)
 
+    /** Incremented when the menu asks for reader mode on the current page. */
+    var readerModeRequest: Int by mutableStateOf(0)
+
+    /** Stage A: per-site zoom levels. */
+    val zoom = ZoomStore(appContext)
+
+    /** Stage A: last [RECENT_LIMIT] tabs closed by the user (private tabs excluded). */
+    var recentlyClosed by mutableStateOf(listOf<ClosedTab>())
+        private set
+
+    private val lastSelectedAt = HashMap<String, Long>()
+
     /**
      * Called with (tab, started=true) when a page starts loading and
      * (tab, started=false) when it finishes. The debug suite hooks page scripts
@@ -97,6 +110,7 @@ class TabsController(
             isPrivate = isPrivate,
         )
         tab.isDesktopMode = desktop
+        tab.zoomPercent = ZoomStore.DEFAULT
         BrowserDelegates.attachTo(tab, this)
         if (openIt) {
             session.open(engine.runtime)
@@ -119,8 +133,126 @@ class TabsController(
         val tab = selectedTab
         if (tab != null) {
             engine.webExtensionController.setTabActive(tab.session, true)
+            lastSelectedAt[tab.id] = System.currentTimeMillis()
+            wake(tab)
         }
+        sleepIdleTabs()
         persistTabs()
+    }
+
+    // ------------------------------------------------------------------
+    // Stage A: tab sleeping, pinning, recently closed
+    // ------------------------------------------------------------------
+
+    /** Deactivates tabs that have been idle for a while to free engine memory. */
+    fun sleepIdleTabs() {
+        val now = System.currentTimeMillis()
+        tabs.forEach { tab ->
+            if (tab.id == selectedId || tab.isSleeping || tab.isPinned || tab.url == null) return@forEach
+            val last = lastSelectedAt[tab.id] ?: return@forEach
+            if (now - last < SLEEP_AFTER_MS) return@forEach
+            try {
+                tab.session.setActive(false)
+                tab.isSleeping = true
+            } catch (e: Throwable) {
+                Log.w(TAG, "sleepIdleTabs failed for ${tab.id}", e)
+            }
+        }
+    }
+
+    /** Restores a sleeping tab when it is selected again. */
+    fun wake(tab: BrowserTab) {
+        if (!tab.isSleeping) return
+        try {
+            tab.session.setActive(true)
+            tab.isSleeping = false
+        } catch (e: Throwable) {
+            Log.w(TAG, "wake failed for ${tab.id}", e)
+        }
+    }
+
+    fun togglePinned(tabId: String) {
+        val tab = tabs.firstOrNull { it.id == tabId } ?: return
+        tab.isPinned = !tab.isPinned
+        tabs = sortTabs(tabs)
+        persistTabs()
+        showSnackbar(
+            appContext.getString(
+                if (tab.isPinned) io.github.sachintha82288.devbrowser.R.string.tab_pinned
+                else io.github.sachintha82288.devbrowser.R.string.tab_unpinned,
+            ),
+        )
+    }
+
+    private fun sortTabs(list: List<BrowserTab>): List<BrowserTab> =
+        list.sortedByDescending { if (it.isPinned) 1 else 0 }
+
+    /** Tabs in display order: pinned first, then opening order. */
+    fun orderedTabs(): List<BrowserTab> = sortTabs(tabs)
+
+    /** Reopens the most recently closed tab; false when the list is empty. */
+    fun reopenLastClosed(): Boolean {
+        val entry = recentlyClosed.firstOrNull() ?: return false
+        recentlyClosed = recentlyClosed.drop(1)
+        newTab(url = entry.url)
+        return true
+    }
+
+    private fun recordClosed(tab: BrowserTab) {
+        if (tab.isPrivate) return
+        val url = tab.url ?: return
+        if (!URLUtil.isHttpUrl(url) && !URLUtil.isHttpsUrl(url)) return
+        val entry = ClosedTab(
+            url = url,
+            title = tab.title.ifBlank { UrlUtils.titleFromUrl(url) },
+        )
+        recentlyClosed = (listOf(entry) + recentlyClosed).take(RECENT_LIMIT)
+    }
+
+    // ------------------------------------------------------------------
+    // Stage A: per-site zoom
+    // ------------------------------------------------------------------
+
+    fun zoomPercentFor(tab: BrowserTab?): Int {
+        val host = UrlUtils.hostOf(tab?.url)
+        return zoom.percentFor(host)
+    }
+
+    fun setZoomForSelected(percent: Int) {
+        val tab = selectedTab ?: return
+        val host = UrlUtils.hostOf(tab.url) ?: return
+        zoom.set(host, percent)
+        tab.zoomPercent = zoom.percentFor(host)
+        applyPerSiteZoom(tab)
+    }
+
+    fun resetZoomForSelected() {
+        val tab = selectedTab ?: return
+        val host = UrlUtils.hostOf(tab.url) ?: return
+        zoom.clear(host)
+        tab.zoomPercent = 100
+        applyPerSiteZoom(tab)
+    }
+
+    /** Applies the stored zoom level after a page finishes loading. */
+    fun applyPerSiteZoom(tab: BrowserTab) {
+        val host = UrlUtils.hostOf(tab.url) ?: return
+        val percent = zoom.percentFor(host)
+        tab.zoomPercent = percent
+        val factor = if (percent == 100) "" else (percent / 100.0).toString()
+        evaluate(tab, "(function(){try{document.documentElement.style.zoom='$factor';return 'ok';}catch(e){return 'err';}})()")
+    }
+
+    private fun evaluate(tab: BrowserTab, script: String) {
+        try {
+            tab.session.evaluateJS(script)
+        } catch (e: Throwable) {
+            Log.w(TAG, "evaluate failed", e)
+        }
+    }
+
+    fun requestReaderMode() {
+        readerModeRequest++
     }
 
     fun closeTab(id: String) {
@@ -130,6 +262,7 @@ class TabsController(
         } catch (e: Throwable) {
             Log.w(TAG, "closeTab: session already closed", e)
         }
+        recordClosed(tab)
         val wasSelected = tab.id == selectedId
         val index = tabs.indexOf(tab)
         tabs = tabs - tab
@@ -172,7 +305,10 @@ class TabsController(
     fun loadInSelectedTab(input: String) {
         val tab = selectedTab ?: newTab()
         if (UrlUtils.looksLikeUrl(input)) {
-            tab.load(UrlUtils.toUrl(input))
+            val target = UrlUtils.toUrl(input)
+            tab.load(
+                if (settings.stripTrackingParams) UrlUtils.stripTrackingParams(target) else target,
+            )
         } else {
             val query = UrlUtils.searchUrl(input, settings.searchEngine.queryTemplate)
             tab.load(query)
@@ -291,7 +427,8 @@ class TabsController(
                         array.put(
                             JSONObject()
                                 .put("url", url)
-                                .put("private", tab.isPrivate),
+                                .put("private", tab.isPrivate)
+                                .put("pinned", tab.isPinned),
                         )
                     }
                 }
@@ -313,7 +450,9 @@ class TabsController(
                 val url = obj.optString("url")
                 val isPrivate = obj.optBoolean("private", false)
                 if (url.isNotBlank()) {
-                    createTab(isPrivate = isPrivate).load(url)
+                    val restored = createTab(isPrivate = isPrivate)
+                    restored.isPinned = obj.optBoolean("pinned", false)
+                    restored.load(url)
                 }
             }
             selectedId = tabs.firstOrNull()?.id
@@ -333,5 +472,10 @@ class TabsController(
 
     companion object {
         private const val TAG = "DevBrowser/Tabs"
+        private const val RECENT_LIMIT = 10
+        private const val SLEEP_AFTER_MS = 10 * 60 * 1000L
     }
 }
+
+/** Stage A: entry in the recently-closed list. */
+data class ClosedTab(val url: String, val title: String)
