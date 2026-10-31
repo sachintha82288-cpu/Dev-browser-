@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- සිංහල strings for the on-device debugging suite (Stage C). -->
+<resources>
+    <string name="dbg_suite_title">DevTools</string>
+    <string name="dbg_suite_badge">උපාංගයේම</string>
+    <string name="dbg_suite_hint">පහත සියල්ල වත්මන් ටැබය සජීවීව පරීක්ෂා කරයි. පැනලයක් විවෘතව තිබියදීත් පිටුව දිගටම ක්‍රියාත්මක වේ.</string>
+    <string name="dbg_close">වහන්න</string>
+    <string name="dbg_no_page">පිටුවක් පූරණය වී නැහැ</string>
+    <string name="dbg_copied">පිටපත් වුණා</string>
+    <string name="dbg_save">සුරකින්න</string>
+    <string name="dbg_cancel">අවලංගු</string>
+    <string name="dbg_history_prev">පෙර විධානය</string>
+    <string name="dbg_history_next">ඊළඟ විධානය</string>
+    <string name="dbg_failed">අසාර්ථකයි</string>
+
+    <!-- Categories -->
+    <string name="dbg_cat_console">කොන්සෝලය</string>
+    <string name="dbg_cat_console_sub">ලොග්, විධාන, කණ්ඩායම් සහ නිර්යාත</string>
+    <string name="dbg_cat_js">JavaScript</string>
+    <string name="dbg_cat_js_sub">කේත ධාවනය, කේත කොටස් සහ දෝෂ සාරාංශ</string>
+    <string name="dbg_cat_dom">DOM</string>
+    <string name="dbg_cat_dom_sub">මූලද්‍රව්‍ය ගස, ගුණාංග, ගණනය කළ ශෛල</string>
+    <string name="dbg_cat_css">CSS</string>
+    <string name="dbg_cat_css_sub">ගැලපෙන නීති, box model, බල කළ තත්ත්ව</string>
+
+    <!-- Console -->
+    <string name="dbg_console_messages">පණිවිඩ</string>
+    <string name="dbg_console_clear">කොන්සෝලය හිස් කරන්න</string>
+    <string name="dbg_console_export">කොන්සෝලය නිර්යාත කරන්න</string>
+    <string name="dbg_console_exported">%1$s වෙත සුරකින ලදී</string>
+    <string name="dbg_console_export_failed">කොන්සෝලය නිර්යාත කළ නොහැක</string>
+    <string name="dbg_console_search">පණිවිඩ පෙරහන් කරන්න</string>
+    <string name="dbg_console_empty">තවම කොන්සෝල් පණිවිඩ නැහැ</string>
+    <string name="dbg_console_result">ප්‍රතිඵලය</string>
+    <string name="dbg_console_run">ධාවනය</string>
+    <string name="dbg_console_command_hint">JavaScript ප්‍රකාශනයක්…</string>
+
+    <!-- JavaScript panel -->
+    <string name="dbg_js_run">ධාවනය</string>
+    <string name="dbg_js_history">ඉතිහාසය</string>
+    <string name="dbg_js_snippets">කේත කොටස්</string>
+    <string name="dbg_js_errors">දෝෂ</string>
+    <string name="dbg_js_input_hint">තෝරාගත් frame එකේ ධාවනය කළ යුතු JavaScript</string>
+    <string name="dbg_js_output">ප්‍රතිදානය</string>
+    <string name="dbg_js_copy_output">පිටපත් කරන්න</string>
+    <string name="dbg_js_options">පිටු විකල්ප</string>
+    <string name="dbg_js_block_site">මෙම අඩවියේ JavaScript අවහිර කරන්න</string>
+    <string name="dbg_js_block_note">Gecko JavaScript සම්පූර්ණ එන්ජිමටම එක් switch එකක් ලෙස ලබා දෙයි. එබැවින් මෙය ක්‍රියාත්මක කළ විට ඔබ එය නැවත අක්‍රිය කරන තෙක් සියලු විවෘත පිටුවල scripts නවතී.</string>
+    <string name="dbg_js_mutation">DOM වෙනස්වීම් කොන්සෝලයට ලොග් කරන්න</string>
+    <string name="dbg_js_no_history">තවම කේත කොටස් ධාවනය කර නැහැ</string>
+    <string name="dbg_js_no_snippets">සුරකින ලද කේත කොටස් නැහැ</string>
+    <string name="dbg_js_no_errors">JavaScript දෝෂ කිසිවක් ග්‍රහණය වී නැහැ</string>
+    <string name="dbg_js_snippet_new">අලුත් කේත කොටස</string>
+    <string name="dbg_js_snippet_edit">කේත කොටස සංස්කරණය</string>
+    <string name="dbg_js_snippet_delete">කේත කොටස මකන්න</string>
+    <string name="dbg_js_snippet_name">නම</string>
+    <string name="dbg_js_snippet_code">JavaScript</string>
+    <string name="dbg_js_snippet_pattern">ස්වයං ධාවන URL රටාව (උදා: https://example.com/*)</string>
+    <string name="dbg_js_snippet_onload">ගැලපෙන පිටුවල ස්වයංක්‍රීයව ධාවනය කරන්න</string>
+
+    <!-- DOM panel -->
+    <string name="dbg_dom_nodes">නෝඩ</string>
+    <string name="dbg_dom_picker">මූලද්‍රව්‍යය තෝරන්න</string>
+    <string name="dbg_dom_refresh">ගස නැවත පූරණය</string>
+    <string name="dbg_dom_search">tag, id හෝ class අනුව පෙරහන්</string>
+    <string name="dbg_dom_empty">DOM ලබා ගත නොහැක</string>
+    <string name="dbg_dom_loading">DOM කියවමින්…</string>
+    <string name="dbg_dom_pick_hint">පරීක්ෂා කිරීමට පිටුවේ මූලද්‍රව්‍යයක් තට්ටු කරන්න</string>
+    <string name="dbg_dom_copy_selector">තේරුම්කාරකය</string>
+    <string name="dbg_dom_copy_html">HTML</string>
+    <string name="dbg_dom_highlight">උද්දීපනය</string>
+    <string name="dbg_dom_computed">ගණනය කළ CSS</string>
+    <string name="dbg_dom_attributes">ගුණාංග</string>
+    <string name="dbg_dom_edit_text">පෙළ සංස්කරණය</string>
+    <string name="dbg_dom_text_content">පෙළ අන්තර්ගතය</string>
+
+    <!-- CSS panel -->
+    <string name="dbg_css_pick">මූලද්‍රව්‍යය තෝරන්න</string>
+    <string name="dbg_css_refresh">ශෛල නැවත පූරණය</string>
+    <string name="dbg_css_no_selection">පළමුව DOM පැනලයේ මූලද්‍රව්‍යයක් තෝරන්න</string>
+    <string name="dbg_css_box_model">Box model</string>
+    <string name="dbg_css_rules">ගැලපෙන නීති</string>
+    <string name="dbg_css_no_rules">මෙම මූලද්‍රව්‍යයට කියවිය හැකි ශෛල පත්‍රිකාවක් ගැලපුණේ නැහැ</string>
+    <string name="dbg_css_edges">margin %1$d %2$d %3$d %4$d · padding %5$d %6$d %7$d %8$d</string>
+</resources>

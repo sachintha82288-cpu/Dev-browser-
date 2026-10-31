@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Bookmark
+import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Extension
@@ -30,8 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.sachintha82288.devbrowser.DevBrowserApplication
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.BrowserTab
 import io.github.sachintha82288.devbrowser.util.UrlUtils
 
@@ -56,23 +59,30 @@ fun MainMenu(
             modifier = Modifier.padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            MenuRow(Icons.Rounded.Add, "New tab") {
+            MenuRow(Icons.Rounded.Add, stringResource(R.string.new_tab)) {
                 app.tabs.newTab(isPrivate = false)
                 onDismiss()
             }
-            MenuRow(Icons.Rounded.VisibilityOff, "New private tab") {
+            MenuRow(Icons.Rounded.VisibilityOff, stringResource(R.string.new_private_tab)) {
                 app.tabs.newTab(isPrivate = true)
                 onDismiss()
             }
-            MenuRow(Icons.Rounded.Search, "Find in page") {
+            MenuRow(Icons.Rounded.Search, stringResource(R.string.find_in_page)) {
                 onFindInPage()
             }
-            MenuRow(Icons.Rounded.DesktopWindows, if (tab?.isDesktopMode == true) "Desktop site ✓" else "Desktop site") {
+            MenuRow(
+                Icons.Rounded.DesktopWindows,
+                if (tab?.isDesktopMode == true) {
+                    stringResource(R.string.desktop_site_active)
+                } else {
+                    stringResource(R.string.desktop_site)
+                },
+            ) {
                 app.tabs.toggleDesktopMode()
                 onDismiss()
             }
             if (tab?.url != null) {
-                MenuRow(Icons.Rounded.Code, "View page source") {
+                MenuRow(Icons.Rounded.Code, stringResource(R.string.view_page_source)) {
                     val url = tab.url ?: ""
                     if (url.startsWith("http")) {
                         app.tabs.newTab(url = "view-source:$url")
@@ -82,21 +92,21 @@ fun MainMenu(
                     onDismiss()
                 }
             }
-            MenuRow(Icons.Rounded.Tune, "about:config") {
+            MenuRow(Icons.Rounded.Tune, stringResource(R.string.about_config)) {
                 app.tabs.loadInSelectedTab("about:config")
                 onDismiss()
             }
-            MenuRow(Icons.Rounded.Extension, "Add-ons") {
+            MenuRow(Icons.Rounded.Extension, stringResource(R.string.extensions)) {
                 onNavigate(Screen.Extensions)
             }
-            MenuRow(Icons.Rounded.Security, "Proxy & Tor") {
+            MenuRow(Icons.Rounded.Security, stringResource(R.string.proxy_and_tor)) {
                 onNavigate(Screen.Proxy)
             }
-            MenuRow(Icons.Rounded.Bookmark, "Bookmarks & history") {
+            MenuRow(Icons.Rounded.Bookmark, stringResource(R.string.library_title)) {
                 onNavigate(Screen.Library)
             }
             if (tab?.url != null) {
-                MenuRow(Icons.Rounded.Share, "Share") {
+                MenuRow(Icons.Rounded.Share, stringResource(R.string.share)) {
                     val url = tab.url ?: ""
                     val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -109,7 +119,12 @@ fun MainMenu(
                     onDismiss()
                 }
             }
-            MenuRow(Icons.Rounded.Settings, "Settings") {
+            if (app.settings.showDebugPanels) {
+                MenuRow(Icons.Rounded.BugReport, stringResource(R.string.developer_tools)) {
+                    onNavigate(Screen.Debug)
+                }
+            }
+            MenuRow(Icons.Rounded.Settings, stringResource(R.string.settings)) {
                 onNavigate(Screen.Settings)
             }
         }

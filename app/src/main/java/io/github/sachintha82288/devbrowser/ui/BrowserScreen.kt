@@ -76,7 +76,7 @@ import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoView
 
 /** Full-screen overlays navigated from the browser chrome. */
-enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library }
+enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library, Debug }
 
 @Composable
 fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
@@ -90,6 +90,8 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
     val findBar = rememberFindBarState()
 
     val urlFocusRequester = remember { FocusRequester() }
+    val contextBookmarkAdded = stringResource(R.string.bookmark_added)
+    val contextBookmarkRemoved = stringResource(R.string.bookmark_removed)
 
     val filePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments(),
@@ -177,13 +179,13 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
                             if (url != null) {
                                 if (app.library.isBookmarked(url)) {
                                     app.library.removeBookmark(url)
-                                    controller.showSnackbar("Bookmark removed")
+                                    controller.showSnackbar(contextBookmarkRemoved)
                                 } else {
                                     app.library.addBookmark(
                                         url,
                                         tab.title.ifBlank { UrlUtils.titleFromUrl(url) },
                                     )
-                                    controller.showSnackbar("Bookmarked")
+                                    controller.showSnackbar(contextBookmarkAdded)
                                 }
                             }
                         },
@@ -274,6 +276,10 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
         Screen.Proxy -> ProxyScreen(app = app, onClose = { screen = Screen.Browser })
         Screen.Settings -> SettingsScreen(app = app, onClose = { screen = Screen.Browser })
         Screen.Library -> LibraryScreen(app = app, onClose = { screen = Screen.Browser })
+        Screen.Debug -> io.github.sachintha82288.devbrowser.ui.debug.DebugSuiteScreen(
+            app = app,
+            onClose = { screen = Screen.Browser },
+        )
         Screen.Browser -> Unit
     }
 

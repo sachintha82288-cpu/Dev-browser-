@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.sachintha82288.devbrowser.DevBrowserApplication
 import io.github.sachintha82288.devbrowser.R
+import io.github.sachintha82288.devbrowser.data.AppLanguage
 import io.github.sachintha82288.devbrowser.data.DohMode
 import io.github.sachintha82288.devbrowser.data.SearchEngine
 import io.github.sachintha82288.devbrowser.data.TrackingProtectionLevel
@@ -64,6 +65,7 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
     var showTpPicker by remember { mutableStateOf(false) }
     var showDohPicker by remember { mutableStateOf(false) }
     var showClearConfirm by remember { mutableStateOf(false) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
 
     val clearedText = stringResource(R.string.data_cleared)
 
@@ -179,7 +181,7 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                         engine.applyPrefs(ProxyPrefs.dohPrefs(settings))
                     },
                     singleLine = true,
-                    label = { Text("DoH resolver URL") },
+                    label = { Text(stringResource(R.string.doh_custom_hint)) },
                     textStyle = MonoTextStyle,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 )
@@ -232,6 +234,41 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                         },
                     )
                 },
+            )
+
+            SettingRow(
+                icon = Icons.Rounded.DesktopWindows,
+                title = stringResource(R.string.desktop_default),
+                subtitle = stringResource(R.string.desktop_default_summary),
+                trailing = {
+                    Switch(
+                        checked = settings.desktopModeDefault,
+                        onCheckedChange = { settings.desktopModeDefault = it },
+                    )
+                },
+            )
+            SettingRow(
+                icon = Icons.Rounded.BugReport,
+                title = stringResource(R.string.show_debug_panels),
+                subtitle = stringResource(R.string.show_debug_panels_summary),
+                trailing = {
+                    Switch(
+                        checked = settings.showDebugPanels,
+                        onCheckedChange = { settings.showDebugPanels = it },
+                    )
+                },
+            )
+
+            HorizontalDivider()
+            SectionLabel(stringResource(R.string.language))
+            SettingRow(
+                icon = Icons.Rounded.Language,
+                title = stringResource(R.string.language),
+                subtitle = when (settings.language) {
+                    AppLanguage.ENGLISH -> stringResource(R.string.language_english)
+                    AppLanguage.SINHALA -> stringResource(R.string.language_sinhala)
+                },
+                onClick = { showLanguagePicker = true },
             )
 
             HorizontalDivider()
@@ -344,16 +381,47 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
         )
     }
 
+    if (showLanguagePicker) {
+        AlertDialog(
+            onDismissRequest = { showLanguagePicker = false },
+            title = { Text(stringResource(R.string.language)) },
+            text = {
+                Column {
+                    listOf(
+                        AppLanguage.ENGLISH to stringResource(R.string.language_english),
+                        AppLanguage.SINHALA to stringResource(R.string.language_sinhala),
+                    ).forEach { (language, label) ->
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = settings.language == language,
+                                onClick = {
+                                    settings.language = language
+                                    showLanguagePicker = false
+                                },
+                            )
+                            Text(label)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLanguagePicker = false }) { Text(stringResource(R.string.ok)) }
+            },
+        )
+    }
+
     if (showClearConfirm) {
         AlertDialog(
             onDismissRequest = { showClearConfirm = false },
             title = { Text(stringResource(R.string.clear_browsing_data)) },
-            text = { Text("Cookies, cache, site data, permissions and sessions will be cleared.") },
+            text = { Text(stringResource(R.string.clear_data_confirm)) },
             confirmButton = {
                 TextButton(onClick = {
                     showClearConfirm = false
                     engine.clearAllBrowsingData { ok ->
-                        app.tabs.showSnackbar(if (ok) clearedText else "Failed")
+                        app.tabs.showSnackbar(
+                            if (ok) clearedText else app.getString(R.string.failed),
+                        )
                     }
                     app.library.clearHistory()
                 }) { Text(stringResource(R.string.ok)) }

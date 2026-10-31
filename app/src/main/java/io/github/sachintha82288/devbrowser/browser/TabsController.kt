@@ -57,6 +57,16 @@ class TabsController(
     /** Incremented when the UI should focus the URL bar (Ctrl+L). */
     var focusUrlBarRequest: Int by mutableStateOf(0)
 
+    /**
+     * Called with (tab, started=true) when a page starts loading and
+     * (tab, started=false) when it finishes. The debug suite hooks page scripts
+     * through this without TabsController depending on it.
+     */
+    var pageLifecycleListener: ((BrowserTab, Boolean) -> Unit)? = null
+
+    /** Called with the tab id whenever a tab is closed (debug state cleanup). */
+    var tabClosedListener: ((String) -> Unit)? = null
+
     /** Set by MainActivity so delegates can start activities / request permissions. */
     var intentLauncher: ((Intent) -> Unit)? = null
     var androidPermissionRequester: ((Array<String>, (Boolean) -> Unit) -> Unit)? = null
@@ -69,16 +79,24 @@ class TabsController(
     // ------------------------------------------------------------------
 
     fun createTab(isPrivate: Boolean = false, openIt: Boolean = true): BrowserTab {
+        val desktop = settings.desktopModeDefault
         val sessionSettings = GeckoSessionSettings.Builder()
             .usePrivateMode(isPrivate)
             .suspendMediaWhenInactive(true)
             .build()
         val session = GeckoSession(sessionSettings)
+        if (desktop) {
+            // Session settings are applied through the documented setters, which
+            // also keeps the values in sync with the per-tab desktop toggle.
+            session.settings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_DESKTOP)
+            session.settings.setUserAgentMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP)
+        }
         val tab = BrowserTab(
             id = UUID.randomUUID().toString(),
             session = session,
             isPrivate = isPrivate,
         )
+        tab.isDesktopMode = desktop
         BrowserDelegates.attachTo(tab, this)
         if (openIt) {
             session.open(engine.runtime)
@@ -123,6 +141,7 @@ class TabsController(
             }
         }
         if (activePrompt?.tabSession === tab.session) activePrompt = null
+        tabClosedListener?.invoke(tab.id)
         if (tabs.isEmpty()) {
             // A browser without tabs is a sad browser; restore the home state.
             newTab()

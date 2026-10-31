@@ -1,5 +1,6 @@
 package io.github.sachintha82288.devbrowser
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -8,11 +9,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import io.github.sachintha82288.devbrowser.ui.BrowserScreen
 import io.github.sachintha82288.devbrowser.ui.theme.DevBrowserTheme
+import io.github.sachintha82288.devbrowser.util.LocaleHelper
 import io.github.sachintha82288.devbrowser.util.UrlUtils
 
 class MainActivity : ComponentActivity() {
 
     private var pendingAndroidPermissionCallback: ((Boolean) -> Unit)? = null
+
+    /** Language tag the Activity resources were created with (see [LocaleHelper]). */
+    private var appliedLanguageTag: String = "en"
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
 
     private val permissionLauncher =
         registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) { grants ->
@@ -26,6 +35,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as DevBrowserApplication
+        appliedLanguageTag = app.settings.language.tag
 
         // Let Gecko delegates start activities and request runtime permissions.
         app.tabs.intentLauncher = { intent -> startActivitySafely(intent) }
@@ -38,6 +48,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DevBrowserTheme(amoledBlack = app.settings.amoledBlack) {
+                // Recreate on a language change so every resource string is reloaded.
+                androidx.compose.runtime.LaunchedEffect(app.settings.language) {
+                    if (app.settings.language.tag != appliedLanguageTag) recreate()
+                }
                 BrowserScreen(app = app, activity = this)
             }
         }

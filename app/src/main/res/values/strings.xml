@@ -140,4 +140,20 @@
     <string name="extension_update_no_update">No update available</string>
     <string name="copied">Copied</string>
     <string name="url_copied">URL copied</string>
+
+    <!-- Developer tools / expansion -->
+    <string name="developer_tools">DevTools</string>
+    <string name="desktop_site_active">Desktop site (on)</string>
+    <string name="desktop_default">Desktop site by default</string>
+    <string name="desktop_default_summary">New tabs request the desktop version of sites</string>
+    <string name="show_debug_panels">Show debug panels</string>
+    <string name="show_debug_panels_summary">Enables the on-device DevTools suite in the page menu</string>
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="bookmark_added">Bookmarked</string>
+    <string name="bookmark_removed">Bookmark removed</string>
+    <string name="doh_custom_hint">DoH resolver URL</string>
+    <string name="clear_data_confirm">Cookies, cache, site data, permissions and sessions will be cleared.</string>
+    <string name="failed">Failed</string>
 </resources>

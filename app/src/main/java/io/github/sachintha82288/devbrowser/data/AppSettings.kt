@@ -20,6 +20,12 @@ enum class DohMode { OFF, DEFAULT, CUSTOM }
 
 enum class ProxyMode { DIRECT, SYSTEM, MANUAL, TOR }
 
+/** Interface language. Each value maps to a BCP-47 tag ("en" / "si"). */
+enum class AppLanguage(val tag: String) {
+    ENGLISH("en"),
+    SINHALA("si"),
+}
+
 /**
  * Application settings persisted in [SharedPreferences], exposed as Compose state so
  * the UI updates immediately when a value changes.
@@ -83,6 +89,25 @@ class AppSettings(context: Context) {
         get() = _aboutConfig
         set(value) { _aboutConfig = value; prefs.edit().putBoolean("about_config", value).apply() }
 
+    /** Default "Request desktop site" state applied to every new tab. */
+    var desktopModeDefault: Boolean
+        get() = _desktopModeDefault
+        set(value) { _desktopModeDefault = value; prefs.edit().putBoolean("desktop_default", value).apply() }
+
+    /**
+     * Master switch for the on-device debugging suite (Stage C). When off, the
+     * page menu hides the "DevTools" entry and the debug overlay cannot open.
+     */
+    var showDebugPanels: Boolean
+        get() = _showDebugPanels
+        set(value) { _showDebugPanels = value; prefs.edit().putBoolean("show_debug_panels", value).apply() }
+
+    // --- Language ---------------------------------------------------------
+
+    var language: AppLanguage
+        get() = _language
+        set(value) { _language = value; prefs.edit().putString("language", value.tag).apply() }
+
     // --- Appearance -------------------------------------------------------
 
     var amoledBlack: Boolean
@@ -130,6 +155,13 @@ class AppSettings(context: Context) {
     private var _remoteDebugging by mutableStateOf(prefs.getBoolean("remote_debugging", false))
     private var _consoleOutput by mutableStateOf(prefs.getBoolean("console_output", true))
     private var _aboutConfig by mutableStateOf(prefs.getBoolean("about_config", true))
+    private var _desktopModeDefault by mutableStateOf(prefs.getBoolean("desktop_default", false))
+    private var _showDebugPanels by mutableStateOf(prefs.getBoolean("show_debug_panels", false))
+
+    private var _language by mutableStateOf(
+        AppLanguage.entries.firstOrNull { it.tag == prefs.getString("language", null) }
+            ?: AppLanguage.ENGLISH,
+    )
 
     private var _amoledBlack by mutableStateOf(prefs.getBoolean("amoled_black", false))
 

@@ -101,10 +101,12 @@ class BrowserDelegates(
     override fun onPageStart(session: GeckoSession, url: String) {
         tab.loading = true
         tab.url = url
+        controller.pageLifecycleListener?.invoke(tab, true)
     }
 
     override fun onPageStop(session: GeckoSession, success: Boolean) {
         tab.loading = false
+        controller.pageLifecycleListener?.invoke(tab, false)
     }
 
     override fun onProgressChange(session: GeckoSession, progress: Int) {

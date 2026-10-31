@@ -140,4 +140,20 @@
     <string name="open_in_browser">DevBrowser එකේ විවෘත කරන්න</string>
     <string name="search_with">%1$s සමඟ සොයන්න</string>
     <string name="copied">පිටපත් වුණා</string>
+
+    <!-- Developer tools / expansion -->
+    <string name="developer_tools">DevTools</string>
+    <string name="desktop_site_active">ඩෙස්ක්ටොප් අඩවිය (සක්‍රිය)</string>
+    <string name="desktop_default">පෙරනිමියෙන් ඩෙස්ක්ටොප් අඩවිය</string>
+    <string name="desktop_default_summary">අලුත් ටැබ් අඩවිවල ඩෙස්ක්ටොප් අනුවාදය ඉල්ලයි</string>
+    <string name="show_debug_panels">Debug පැනල පෙන්වන්න</string>
+    <string name="show_debug_panels_summary">පිටු මෙනුවේ උපාංගයේම DevTools කට්ටලය සක්‍රිය කරයි</string>
+    <string name="language">භාෂාව</string>
+    <string name="language_english">English</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="bookmark_added">පොත් යොදන ලදී</string>
+    <string name="bookmark_removed">පොත් යොදනය ඉවත් කළා</string>
+    <string name="doh_custom_hint">DoH විශ්ලේෂක URL</string>
+    <string name="clear_data_confirm">Cookies, cache, අඩවි දත්ත, අවසර සහ sessions හිස් කරනු ඇත.</string>
+    <string name="failed">අසාර්ථකයි</string>
 </resources>

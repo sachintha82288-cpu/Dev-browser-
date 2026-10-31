@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English strings for the on-device debugging suite (Stage C). -->
+<resources>
+    <string name="dbg_suite_title">DevTools</string>
+    <string name="dbg_suite_badge">on-device</string>
+    <string name="dbg_suite_hint">Everything below inspects the current tab live. The page keeps running while a panel is open.</string>
+    <string name="dbg_close">Close</string>
+    <string name="dbg_no_page">No page loaded</string>
+    <string name="dbg_copied">Copied</string>
+    <string name="dbg_save">Save</string>
+    <string name="dbg_cancel">Cancel</string>
+    <string name="dbg_history_prev">Previous command</string>
+    <string name="dbg_history_next">Next command</string>
+    <string name="dbg_failed">Failed</string>
+
+    <!-- Categories -->
+    <string name="dbg_cat_console">Console</string>
+    <string name="dbg_cat_console_sub">Logs, commands, grouping and export</string>
+    <string name="dbg_cat_js">JavaScript</string>
+    <string name="dbg_cat_js_sub">Run code, snippets and error summaries</string>
+    <string name="dbg_cat_dom">DOM</string>
+    <string name="dbg_cat_dom_sub">Element tree, attributes, computed styles</string>
+    <string name="dbg_cat_css">CSS</string>
+    <string name="dbg_cat_css_sub">Matched rules, box model, forced states</string>
+
+    <!-- Console -->
+    <string name="dbg_console_messages">messages</string>
+    <string name="dbg_console_clear">Clear console</string>
+    <string name="dbg_console_export">Export console</string>
+    <string name="dbg_console_exported">Saved to %1$s</string>
+    <string name="dbg_console_export_failed">Could not export the console</string>
+    <string name="dbg_console_search">Filter messages</string>
+    <string name="dbg_console_empty">No console messages yet</string>
+    <string name="dbg_console_result">result</string>
+    <string name="dbg_console_run">Run</string>
+    <string name="dbg_console_command_hint">JavaScript expression…</string>
+
+    <!-- JavaScript panel -->
+    <string name="dbg_js_run">Run</string>
+    <string name="dbg_js_history">History</string>
+    <string name="dbg_js_snippets">Snippets</string>
+    <string name="dbg_js_errors">Errors</string>
+    <string name="dbg_js_input_hint">JavaScript to execute in the selected frame</string>
+    <string name="dbg_js_output">Output</string>
+    <string name="dbg_js_copy_output">Copy</string>
+    <string name="dbg_js_options">Page options</string>
+    <string name="dbg_js_block_site">Block JavaScript on this site</string>
+    <string name="dbg_js_block_note">Gecko exposes JavaScript as one engine-wide switch, so blocking here pauses scripts on every open page until you turn it off again.</string>
+    <string name="dbg_js_mutation">Log DOM mutations to the console</string>
+    <string name="dbg_js_no_history">No snippets run yet</string>
+    <string name="dbg_js_no_snippets">No saved snippets</string>
+    <string name="dbg_js_no_errors">No JavaScript errors captured</string>
+    <string name="dbg_js_snippet_new">New snippet</string>
+    <string name="dbg_js_snippet_edit">Edit snippet</string>
+    <string name="dbg_js_snippet_delete">Delete snippet</string>
+    <string name="dbg_js_snippet_name">Name</string>
+    <string name="dbg_js_snippet_code">JavaScript</string>
+    <string name="dbg_js_snippet_pattern">Auto-run URL pattern (e.g. https://example.com/*)</string>
+    <string name="dbg_js_snippet_onload">Run automatically on matching pages</string>
+
+    <!-- DOM panel -->
+    <string name="dbg_dom_nodes">nodes</string>
+    <string name="dbg_dom_picker">Pick element</string>
+    <string name="dbg_dom_refresh">Reload tree</string>
+    <string name="dbg_dom_search">Filter by tag, id or class</string>
+    <string name="dbg_dom_empty">No DOM available</string>
+    <string name="dbg_dom_loading">Reading the DOM…</string>
+    <string name="dbg_dom_pick_hint">Tap an element on the page to inspect it</string>
+    <string name="dbg_dom_copy_selector">Selector</string>
+    <string name="dbg_dom_copy_html">HTML</string>
+    <string name="dbg_dom_highlight">Highlight</string>
+    <string name="dbg_dom_computed">Computed CSS</string>
+    <string name="dbg_dom_attributes">Attributes</string>
+    <string name="dbg_dom_edit_text">Edit text</string>
+    <string name="dbg_dom_text_content">Text content</string>
+
+    <!-- CSS panel -->
+    <string name="dbg_css_pick">Pick element</string>
+    <string name="dbg_css_refresh">Reload styles</string>
+    <string name="dbg_css_no_selection">Select an element in the DOM panel first</string>
+    <string name="dbg_css_box_model">Box model</string>
+    <string name="dbg_css_rules">Matched rules</string>
+    <string name="dbg_css_no_rules">No readable stylesheet matched this element</string>
+    <string name="dbg_css_edges">margin %1$d %2$d %3$d %4$d · padding %5$d %6$d %7$d %8$d</string>
+</resources>
