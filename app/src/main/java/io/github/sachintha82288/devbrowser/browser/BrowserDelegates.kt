@@ -118,6 +118,7 @@ class BrowserDelegates(
         securityInfo: GeckoSession.ProgressDelegate.SecurityInformation,
     ) {
         tab.isSecure = securityInfo.isSecure
+        tab.certificate = CertificateInspector.fromSecurityInformation(securityInfo)
     }
 
     // ---------------------------------------------------------------------

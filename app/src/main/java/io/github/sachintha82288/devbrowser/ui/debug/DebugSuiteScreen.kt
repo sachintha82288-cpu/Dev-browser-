@@ -20,6 +20,9 @@ import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Security
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Storage
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Icon
@@ -47,6 +50,9 @@ import io.github.sachintha82288.devbrowser.ui.debug.css.CssPanel
 import io.github.sachintha82288.devbrowser.ui.debug.dom.DomPanel
 import io.github.sachintha82288.devbrowser.ui.debug.js.JsPanel
 import io.github.sachintha82288.devbrowser.ui.debug.network.NetworkPanel
+import io.github.sachintha82288.devbrowser.ui.debug.performance.PerformancePanel
+import io.github.sachintha82288.devbrowser.ui.debug.responsive.ResponsivePanel
+import io.github.sachintha82288.devbrowser.ui.debug.security.SecurityPanel
 import io.github.sachintha82288.devbrowser.ui.debug.storage.StoragePanel
 import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.NeonPurple
@@ -61,6 +67,9 @@ sealed interface DebugRoute {
     data object Css : DebugRoute
     data object Network : DebugRoute
     data object Storage : DebugRoute
+    data object Performance : DebugRoute
+    data object Security : DebugRoute
+    data object Responsive : DebugRoute
 }
 
 private data class DebugEntry(
@@ -77,6 +86,9 @@ private val debugEntries = listOf(
     DebugEntry(DebugRoute.Css, R.string.dbg_cat_css, R.string.dbg_cat_css_sub, Icons.Rounded.Palette),
     DebugEntry(DebugRoute.Network, R.string.dbg_cat_network, R.string.dbg_cat_network_sub, Icons.Rounded.Tune),
     DebugEntry(DebugRoute.Storage, R.string.dbg_cat_storage, R.string.dbg_cat_storage_sub, Icons.Rounded.Storage),
+    DebugEntry(DebugRoute.Performance, R.string.dbg_cat_perf, R.string.dbg_cat_perf_sub, Icons.Rounded.Star),
+    DebugEntry(DebugRoute.Security, R.string.dbg_cat_security, R.string.dbg_cat_security_sub, Icons.Rounded.Security),
+    DebugEntry(DebugRoute.Responsive, R.string.dbg_cat_responsive, R.string.dbg_cat_responsive_sub, Icons.Rounded.DesktopWindows),
 )
 
 /**
@@ -116,6 +128,9 @@ fun DebugSuiteScreen(app: DevBrowserApplication, onClose: () -> Unit) {
             DebugRoute.Css -> CssPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
             DebugRoute.Network -> NetworkPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
             DebugRoute.Storage -> StoragePanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
+            DebugRoute.Performance -> PerformancePanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
+            DebugRoute.Security -> SecurityPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
+            DebugRoute.Responsive -> ResponsivePanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
         }
     }
 }

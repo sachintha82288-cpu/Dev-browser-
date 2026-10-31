@@ -222,6 +222,14 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
                     )
                 }
 
+                if (app.settings.showDebugPanels && tab != null) {
+                    io.github.sachintha82288.devbrowser.ui.debug.overlay.DebugOverlayHost(
+                        app = app,
+                        tab = tab,
+                        modifier = Modifier.align(Alignment.TopEnd),
+                    )
+                }
+
                 if (findBar.active) {
                     FindBar(
                         state = findBar,

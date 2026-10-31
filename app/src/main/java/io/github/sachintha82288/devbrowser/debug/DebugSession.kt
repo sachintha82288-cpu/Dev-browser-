@@ -67,6 +67,19 @@ class DebugSession(val tabId: String) {
     var lastOutput by mutableStateOf<JsOutput?>(null)
     var mutationLogging by mutableStateOf(false)
 
+    // --- Performance (category 6) ---------------------------------------
+
+    var perfOverlay by mutableStateOf(false)
+    var vitalsOverlay by mutableStateOf(false)
+    var longTaskLogging by mutableStateOf(false)
+    var shiftFlash by mutableStateOf(false)
+
+    // --- Responsive emulation (category 9) -------------------------------
+
+    var responsiveTouch by mutableStateOf(false)
+    var responsiveOverlay by mutableStateOf(false)
+    var responsiveRuler by mutableStateOf(false)
+
     // --- DOM inspector (category 3) -------------------------------------
 
     var domRoot by mutableStateOf<DomNode?>(null)

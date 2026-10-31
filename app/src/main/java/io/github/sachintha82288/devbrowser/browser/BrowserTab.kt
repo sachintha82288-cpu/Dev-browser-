@@ -35,6 +35,9 @@ class BrowserTab(
     /** Fullscreen video mode requested by the page. */
     var isFullScreen: Boolean by mutableStateOf(false)
 
+    /** Leaf TLS certificate reported by the engine (debug suite, feature 65). */
+    var certificate by mutableStateOf<CertificateInfo?>(null)
+
     fun goHome() {
         url = null
         title = ""
