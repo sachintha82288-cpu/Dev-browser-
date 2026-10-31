@@ -80,6 +80,19 @@ class DebugSession(val tabId: String) {
     var responsiveOverlay by mutableStateOf(false)
     var responsiveRuler by mutableStateOf(false)
 
+    // --- Rendering (category 11) -----------------------------------------
+
+    var renderingPaint by mutableStateOf(false)
+    var renderingShift by mutableStateOf(false)
+    var renderingLayers by mutableStateOf(false)
+    var renderingScheme by mutableStateOf("system")
+    var renderingMotion by mutableStateOf("no-preference")
+
+    // --- Accessibility (category 12) -------------------------------------
+
+    var a11yContrast by mutableStateOf(false)
+    var a11yTabOrder by mutableStateOf(false)
+
     // --- DOM inspector (category 3) -------------------------------------
 
     var domRoot by mutableStateOf<DomNode?>(null)
