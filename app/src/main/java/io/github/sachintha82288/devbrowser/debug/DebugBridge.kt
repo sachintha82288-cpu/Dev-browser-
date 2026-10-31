@@ -3,6 +3,8 @@ package io.github.sachintha82288.devbrowser.debug
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import org.json.JSONArray
 import org.json.JSONObject
 import org.mozilla.geckoview.GeckoSession
@@ -96,6 +98,34 @@ object DebugBridge {
                     )
                 },
             )
+        }
+    }
+
+    /** Suspending variant used by panels that need sequential page calls. */
+    suspend fun awaitRaw(session: GeckoSession, script: String): Any? =
+        suspendCancellableCoroutine { continuation ->
+            evalRaw(session, script) { value ->
+                if (continuation.isActive) continuation.resume(value)
+            }
+        }
+
+    suspend fun awaitJson(session: GeckoSession, script: String): JSONObject? {
+        val value = awaitRaw(session, script)
+        val text = jsonText(value) ?: return null
+        return try {
+            JSONObject(text)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    suspend fun awaitJsonArray(session: GeckoSession, script: String): JSONArray? {
+        val value = awaitRaw(session, script)
+        val text = jsonText(value) ?: return null
+        return try {
+            JSONArray(text)
+        } catch (_: Exception) {
+            null
         }
     }
 

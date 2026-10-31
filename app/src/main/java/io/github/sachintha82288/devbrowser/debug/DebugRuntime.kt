@@ -67,7 +67,66 @@ class DebugRuntime(
         DebugBridge.evalRaw(tab.session, DebugJs.bootstrap) { result ->
             if (result != null) {
                 injected.add(tab.id)
+                installNetworkRecorder(tab)
                 then?.invoke()
+            }
+        }
+    }
+
+    /**
+     * Installs the network recorder (category 2). Called for every page load so
+     * requests made during parsing are captured as early as GeckoView allows.
+     */
+    fun installNetworkRecorder(tab: BrowserTab) {
+        DebugBridge.evalRaw(
+            tab.session,
+            NetworkScripts.recorder(store.blockedRequestTargets, store.networkThrottle),
+        ) { }
+    }
+
+    fun drainNetwork(tab: BrowserTab) {
+        val session = session(tab)
+        if (session.networkDraining) return
+        session.networkDraining = true
+        DebugBridge.evalJsonArray(tab.session, NetworkScripts.drainScript(session.lastNetSeq)) { array ->
+            session.networkDraining = false
+            session.appendNetwork(NetworkParser.parseEntries(array))
+        }
+        DebugBridge.evalJsonArray(tab.session, NetworkScripts.drainWsScript) { array ->
+            val sockets = NetworkParser.parseWebSockets(array)
+            if (sockets.isNotEmpty()) session.webSockets = sockets
+        }
+    }
+
+    fun clearNetwork(tab: BrowserTab) {
+        session(tab).clearNetwork()
+    }
+
+    /** Feature 22: block a URL (or its origin) for this site. */
+    fun blockRequest(tab: BrowserTab, target: String) {
+        store.blockRequestTarget(target)
+        refreshBlocklist(tab)
+    }
+
+    fun unblockRequest(tab: BrowserTab, target: String) {
+        store.unblockRequestTarget(target)
+        refreshBlocklist(tab)
+    }
+
+    private fun refreshBlocklist(tab: BrowserTab) {
+        val list = JSONArray().apply { store.blockedRequestTargets.forEach { put(it) } }
+        DebugBridge.evalRaw(
+            tab.session,
+            "(function(){try{if(window.__db&&window.__db.setBlocked){window.__db.setBlocked($list);}return 'ok';}catch(e){return 'err';}})()",
+        ) { }
+    }
+
+    /** Feature 96: apply a throttling profile to every open tab. */
+    fun setThrottle(profile: String) {
+        store.setNetworkThrottle(profile)
+        tabsProvider().forEach { tab ->
+            if (tab.url != null) {
+                DebugBridge.evalRaw(tab.session, NetworkScripts.setThrottleScript(profile)) { }
             }
         }
     }
@@ -91,7 +150,12 @@ class DebugRuntime(
         scope.launch {
             while (isActive) {
                 if (settings.showDebugPanels) {
-                    tabsProvider().forEach { tab -> if (tab.url != null) drainConsole(tab) }
+                    tabsProvider().forEach { tab ->
+                        if (tab.url != null) {
+                            drainConsole(tab)
+                            drainNetwork(tab)
+                        }
+                    }
                 }
                 delay(POLL_INTERVAL_MS)
             }

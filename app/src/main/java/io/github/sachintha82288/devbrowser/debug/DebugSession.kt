@@ -32,6 +32,30 @@ class DebugSession(val tabId: String) {
     var commandHistory by mutableStateOf<List<String>>(emptyList())
     var commandIndex by mutableStateOf(-1)
 
+    // --- Network inspector (category 2) ---------------------------------
+
+    var network by mutableStateOf<List<NetworkEntry>>(emptyList())
+        private set
+    var lastNetSeq: Long = 0
+    var networkDraining: Boolean = false
+
+    var networkTypes by mutableStateOf(RequestType.entries.toSet())
+    var networkQuery by mutableStateOf("")
+    var networkRegex by mutableStateOf(false)
+    var selectedRequestId by mutableStateOf<Long?>(null)
+
+    var webSockets by mutableStateOf<List<WebSocketRecord>>(emptyList())
+
+    fun appendNetwork(entries: List<NetworkEntry>) {
+        if (entries.isEmpty()) return
+        entries.forEach { entry -> if (entry.id > lastNetSeq) lastNetSeq = entry.id }
+        network = (network + entries).takeLast(MAX_NETWORK)
+    }
+
+    fun clearNetwork() {
+        network = emptyList()
+    }
+
     // --- Aggregated JS errors (feature 44) ------------------------------
 
     var jsErrors by mutableStateOf<List<JsErrorRecord>>(emptyList())
@@ -114,6 +138,7 @@ class DebugSession(val tabId: String) {
     companion object {
         private const val MAX_CONSOLE = 2000
         private const val MAX_ERRORS = 200
+        private const val MAX_NETWORK = 600
 
         /** Parses the JSON array returned by [DebugJs.drainScript]. */
         fun parseConsoleArray(array: JSONArray?): List<ConsoleEntry> {

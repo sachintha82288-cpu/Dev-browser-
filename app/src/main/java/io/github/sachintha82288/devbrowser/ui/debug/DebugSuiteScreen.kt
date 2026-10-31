@@ -46,6 +46,8 @@ import io.github.sachintha82288.devbrowser.ui.debug.console.ConsolePanel
 import io.github.sachintha82288.devbrowser.ui.debug.css.CssPanel
 import io.github.sachintha82288.devbrowser.ui.debug.dom.DomPanel
 import io.github.sachintha82288.devbrowser.ui.debug.js.JsPanel
+import io.github.sachintha82288.devbrowser.ui.debug.network.NetworkPanel
+import io.github.sachintha82288.devbrowser.ui.debug.storage.StoragePanel
 import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.NeonPurple
 import io.github.sachintha82288.devbrowser.ui.theme.NeonRed
@@ -57,6 +59,8 @@ sealed interface DebugRoute {
     data object Javascript : DebugRoute
     data object Dom : DebugRoute
     data object Css : DebugRoute
+    data object Network : DebugRoute
+    data object Storage : DebugRoute
 }
 
 private data class DebugEntry(
@@ -71,6 +75,8 @@ private val debugEntries = listOf(
     DebugEntry(DebugRoute.Javascript, R.string.dbg_cat_js, R.string.dbg_cat_js_sub, Icons.Rounded.Code),
     DebugEntry(DebugRoute.Dom, R.string.dbg_cat_dom, R.string.dbg_cat_dom_sub, Icons.Rounded.Tune),
     DebugEntry(DebugRoute.Css, R.string.dbg_cat_css, R.string.dbg_cat_css_sub, Icons.Rounded.Palette),
+    DebugEntry(DebugRoute.Network, R.string.dbg_cat_network, R.string.dbg_cat_network_sub, Icons.Rounded.Tune),
+    DebugEntry(DebugRoute.Storage, R.string.dbg_cat_storage, R.string.dbg_cat_storage_sub, Icons.Rounded.Storage),
 )
 
 /**
@@ -108,6 +114,8 @@ fun DebugSuiteScreen(app: DevBrowserApplication, onClose: () -> Unit) {
             DebugRoute.Javascript -> JsPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
             DebugRoute.Dom -> DomPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
             DebugRoute.Css -> CssPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
+            DebugRoute.Network -> NetworkPanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
+            DebugRoute.Storage -> StoragePanel(app = app, tab = tab, onClose = { route = DebugRoute.Home })
         }
     }
 }
