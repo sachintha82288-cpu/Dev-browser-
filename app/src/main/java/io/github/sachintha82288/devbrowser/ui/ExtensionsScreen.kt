@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.FileUpload
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +51,35 @@ import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
 fun ExtensionsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
     val manager = app.extensions
     var url by remember { mutableStateOf("") }
+    var unsignedUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
     val filePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { uri ->
         if (uri != null) {
-            manager.installFromFile(uri)
+            // Stage B: a local .xpi bypasses AMO signing, so confirm first.
+            unsignedUri = uri
         }
+    }
+
+    if (unsignedUri != null) {
+        AlertDialog(
+            onDismissRequest = { unsignedUri = null },
+            title = { Text(stringResource(R.string.unsigned_extension_title)) },
+            text = { Text(stringResource(R.string.unsigned_extension_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val uri = unsignedUri
+                    unsignedUri = null
+                    if (uri != null) manager.installFromFile(uri)
+                }) { Text(stringResource(R.string.unsigned_extension_install)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { unsignedUri = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

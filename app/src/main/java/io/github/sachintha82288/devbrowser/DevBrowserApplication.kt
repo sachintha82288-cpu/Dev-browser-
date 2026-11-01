@@ -34,7 +34,7 @@ class DevBrowserApplication : Application() {
         super.onCreate()
 
         settings = AppSettings(this)
-        library = Library(this)
+        library = Library(this) { settings.encryptStorage }
         engine = GeckoEngine(this, settings)
         tabs = TabsController(this, engine, settings, library)
         extensions = ExtensionManager(this, tabs, appScope)
@@ -53,5 +53,25 @@ class DevBrowserApplication : Application() {
         }
         tabs.tabClosedListener = { tabId -> debug.forget(tabId) }
         debug.startPolling(appScope)
+    }
+
+    /**
+     * Stage B panic button: close every tab and wipe session data immediately.
+     * Runs synchronously from the user's point of view — the wipe itself is
+     * asynchronous inside the engine.
+     */
+    fun panic() {
+        tabs.closeAllTabs()
+        library.clearHistory()
+        library.clearBookmarks()
+        tabs.permissions.clearAll()
+        engine.clearAllBrowsingData { }
+        tabs.showSnackbar(getString(R.string.panic_done))
+    }
+
+    /** Stage B clear-data-on-exit: history + cookies/cache, tabs stay open. */
+    fun clearSessionData() {
+        library.clearHistory()
+        engine.clearAllBrowsingData { }
     }
 }

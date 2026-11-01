@@ -30,7 +30,7 @@ object Downloader {
                 }
             }
 
-            val filename = fileName(response)
+            val filename = fileNameOf(response)
             request.setTitle(filename)
             request.setDescription(response.uri)
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
@@ -47,7 +47,8 @@ object Downloader {
         }
     }
 
-    private fun fileName(response: WebResponse): String {
+    /** File name that will be used on disk (also used by the danger warning). */
+    fun fileNameOf(response: WebResponse): String {
         val disposition = response.headers["Content-Disposition"]
         val fromHeader = disposition?.let { parseFilename(it) }
         if (!fromHeader.isNullOrBlank()) return sanitize(fromHeader)

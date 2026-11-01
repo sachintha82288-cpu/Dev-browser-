@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.sachintha82288.devbrowser.data.AppSettings
 import io.github.sachintha82288.devbrowser.data.Library
+import io.github.sachintha82288.devbrowser.data.PermissionStore
 import io.github.sachintha82288.devbrowser.data.ZoomStore
 import io.github.sachintha82288.devbrowser.downloads.Downloader
 import io.github.sachintha82288.devbrowser.util.UrlUtils
@@ -63,6 +64,9 @@ class TabsController(
 
     /** Stage A: per-site zoom levels. */
     val zoom = ZoomStore(appContext)
+
+    /** Stage B: remembered per-site permission decisions. */
+    val permissions = PermissionStore(appContext)
 
     /** Stage A: last [RECENT_LIMIT] tabs closed by the user (private tabs excluded). */
     var recentlyClosed by mutableStateOf(listOf<ClosedTab>())
@@ -405,12 +409,47 @@ class TabsController(
         }
     }
 
-    fun download(response: WebResponse) {
+    /**
+     * Stage B: executable downloads are confirmed first; everything else goes
+     * straight to the system DownloadManager.
+     */
+    fun download(response: WebResponse, tab: BrowserTab) {
+        val fileName = Downloader.fileNameOf(response)
+        if (DangerousDownloads.isDangerous(fileName)) {
+            showPrompt(
+                ActivePrompt.DangerousDownload(
+                    tabSession = tab.session,
+                    fileName = fileName,
+                    host = UrlUtils.hostOf(response.uri) ?: "",
+                    isPackage = DangerousDownloads.isAndroidPackage(fileName),
+                    onConfirm = {
+                        dismissPrompt()
+                        val ok = Downloader.enqueue(appContext, response)
+                        showSnackbar(
+                            if (ok) appContext.getString(io.github.sachintha82288.devbrowser.R.string.download_started, fileName)
+                            else appContext.getString(io.github.sachintha82288.devbrowser.R.string.download_failed),
+                        )
+                    },
+                    onCancel = { dismissPrompt() },
+                ),
+            )
+            return
+        }
         val ok = Downloader.enqueue(appContext, response)
         showSnackbar(
-            if (ok) "Download started: ${response.uri.substringAfterLast('/')}"
-            else "Download failed",
+            if (ok) appContext.getString(io.github.sachintha82288.devbrowser.R.string.download_started, fileName)
+            else appContext.getString(io.github.sachintha82288.devbrowser.R.string.download_failed),
         )
+    }
+
+    /** Stage B: asks the page whether it shows credentials over clear text. */
+    fun checkInsecureLogin(tab: BrowserTab) {
+        io.github.sachintha82288.devbrowser.debug.DebugBridge.evalJson(
+            tab.session,
+            LoginWarning.script,
+        ) { payload ->
+            tab.insecureLoginFields = LoginWarning.insecurePasswordFields(payload)
+        }
     }
 
     // ------------------------------------------------------------------

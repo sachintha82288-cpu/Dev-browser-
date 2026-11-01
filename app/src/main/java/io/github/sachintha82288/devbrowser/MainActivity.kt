@@ -7,6 +7,10 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import io.github.sachintha82288.devbrowser.ui.AppLockScreen
 import io.github.sachintha82288.devbrowser.ui.BrowserScreen
 import io.github.sachintha82288.devbrowser.ui.theme.DevBrowserTheme
 import io.github.sachintha82288.devbrowser.util.LocaleHelper
@@ -18,6 +22,9 @@ class MainActivity : ComponentActivity() {
 
     /** Language tag the Activity resources were created with (see [LocaleHelper]). */
     private var appliedLanguageTag: String = "en"
+
+    /** Stage B: true while the app lock screen is shown. */
+    private var locked by mutableStateOf(false)
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -45,6 +52,7 @@ class MainActivity : ComponentActivity() {
         }
 
         handleBrowserIntent(intent)
+        locked = app.settings.appLock
 
         setContent {
             DevBrowserTheme(amoledBlack = app.settings.amoledBlack) {
@@ -52,9 +60,20 @@ class MainActivity : ComponentActivity() {
                 androidx.compose.runtime.LaunchedEffect(app.settings.language) {
                     if (app.settings.language.tag != appliedLanguageTag) recreate()
                 }
-                BrowserScreen(app = app, activity = this)
+                if (locked) {
+                    AppLockScreen(activity = this, onUnlocked = { locked = false })
+                } else {
+                    BrowserScreen(app = app, activity = this)
+                }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val app = application as DevBrowserApplication
+        if (app.settings.clearOnExit) app.clearSessionData()
+        if (app.settings.appLock) locked = true
     }
 
     override fun onNewIntent(intent: Intent) {

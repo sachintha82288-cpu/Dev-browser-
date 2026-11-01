@@ -47,6 +47,9 @@ class BrowserTab(
     /** Stage A: per-site zoom in percent, 100 = unchanged. */
     var zoomPercent: Int by mutableStateOf(100)
 
+    /** Stage B: clear-text password fields detected on this page. */
+    var insecureLoginFields: Int by mutableStateOf(0)
+
     fun goHome() {
         url = null
         title = ""

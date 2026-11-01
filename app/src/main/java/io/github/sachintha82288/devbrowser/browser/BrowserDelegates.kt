@@ -108,6 +108,7 @@ class BrowserDelegates(
         tab.loading = false
         // Stage A: restore the per-site zoom level for this host.
         controller.applyPerSiteZoom(tab)
+        controller.checkInsecureLogin(tab)
         controller.pageLifecycleListener?.invoke(tab, false)
     }
 
@@ -144,7 +145,7 @@ class BrowserDelegates(
     }
 
     override fun onExternalResponse(session: GeckoSession, response: org.mozilla.geckoview.WebResponse) {
-        controller.download(response)
+        controller.download(response, tab)
     }
 
     override fun onCrash(session: GeckoSession) {
@@ -206,12 +207,21 @@ class BrowserDelegates(
                 },
             )
         }
+        val hostKey = UrlUtils.hostOf(perm.uri) ?: perm.uri
+        // Stage B: honour a decision the user already remembered for this site.
+        controller.permissions.decision(hostKey, kind.name)?.let { remembered ->
+            return GeckoResult.fromValue(
+                if (remembered) GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
+                else GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY,
+            )
+        }
         val result = GeckoResult<Int>()
         controller.requestPermission(
             ActivePermission(
-                host = UrlUtils.hostOf(perm.uri) ?: perm.uri,
+                host = hostKey,
                 kind = kind,
                 onAnswer = { granted ->
+                    controller.permissions.remember(hostKey, kind.name, granted)
                     result.complete(
                         if (granted) GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
                         else GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY,

@@ -83,6 +83,21 @@ class AppSettings(context: Context) {
         get() = _dohUrl
         set(value) { _dohUrl = value; prefs.edit().putString("doh_url", value).apply() }
 
+    /** Stage B: require biometrics / device credential when the app opens. */
+    var appLock: Boolean
+        get() = _appLock
+        set(value) { _appLock = value; prefs.edit().putBoolean("app_lock", value).apply() }
+
+    /** Stage B: wipe history, cookies and site data when the app leaves the foreground. */
+    var clearOnExit: Boolean
+        get() = _clearOnExit
+        set(value) { _clearOnExit = value; prefs.edit().putBoolean("clear_on_exit", value).apply() }
+
+    /** Stage B: encrypt bookmarks/history at rest with an Android Keystore key. */
+    var encryptStorage: Boolean
+        get() = _encryptStorage
+        set(value) { _encryptStorage = value; prefs.edit().putBoolean("encrypt_storage", value).apply() }
+
     // --- Developer --------------------------------------------------------
 
     var remoteDebugging: Boolean
@@ -160,6 +175,10 @@ class AppSettings(context: Context) {
     private var _webFonts by mutableStateOf(prefs.getBoolean("web_fonts", true))
     private var _dohMode by mutableStateOf(enumPref("doh_mode", DohMode.OFF, DohMode.entries))
     private var _dohUrl by mutableStateOf(prefs.getString("doh_url", "") ?: "")
+
+    private var _appLock by mutableStateOf(prefs.getBoolean("app_lock", false))
+    private var _clearOnExit by mutableStateOf(prefs.getBoolean("clear_on_exit", false))
+    private var _encryptStorage by mutableStateOf(prefs.getBoolean("encrypt_storage", false))
 
     private var _remoteDebugging by mutableStateOf(prefs.getBoolean("remote_debugging", false))
     private var _consoleOutput by mutableStateOf(prefs.getBoolean("console_output", true))

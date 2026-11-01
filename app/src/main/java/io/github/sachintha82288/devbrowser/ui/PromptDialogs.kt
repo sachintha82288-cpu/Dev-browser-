@@ -297,6 +297,42 @@ fun PromptDialog(
             )
         }
 
+        is ActivePrompt.DangerousDownload -> AlertDialog(
+            onDismissRequest = {
+                prompt.onCancel()
+                onDismiss()
+            },
+            title = { Text(stringResource(R.string.download_warning_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = stringResource(
+                            if (prompt.isPackage) R.string.download_warning_apk
+                            else R.string.download_warning_executable,
+                            prompt.fileName,
+                        ),
+                    )
+                    Text(
+                        text = prompt.host,
+                        style = MonoTextStyle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    prompt.onConfirm()
+                    onDismiss()
+                }) { Text(stringResource(R.string.download_anyway)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    prompt.onCancel()
+                    onDismiss()
+                }) { Text(stringResource(R.string.cancel)) }
+            },
+        )
+
         is ActivePrompt.File -> Unit // handled by the system file picker launcher
 
         is ActivePrompt.Unsupported -> AlertDialog(

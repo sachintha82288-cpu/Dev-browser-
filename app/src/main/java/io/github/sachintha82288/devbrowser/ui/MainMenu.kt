@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Screenshot
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
@@ -132,6 +133,9 @@ fun MainMenu(
             }
             MenuRow(Icons.Rounded.Extension, stringResource(R.string.extensions)) {
                 onNavigate(Screen.Extensions)
+            }
+            MenuRow(Icons.Rounded.Shield, stringResource(R.string.menu_security)) {
+                onNavigate(Screen.Security)
             }
             MenuRow(Icons.Rounded.Security, stringResource(R.string.proxy_and_tor)) {
                 onNavigate(Screen.Proxy)

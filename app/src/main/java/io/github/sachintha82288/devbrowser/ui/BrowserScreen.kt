@@ -78,13 +78,14 @@ import io.github.sachintha82288.devbrowser.ui.components.rememberFindBarState
 import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
 import io.github.sachintha82288.devbrowser.ui.theme.NeonCyan
 import io.github.sachintha82288.devbrowser.ui.theme.TextSecondary
+import io.github.sachintha82288.devbrowser.util.IdnCheck
 import io.github.sachintha82288.devbrowser.util.UrlUtils
 import kotlinx.coroutines.launch
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoView
 
 /** Full-screen overlays navigated from the browser chrome. */
-enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library, Debug, Reader }
+enum class Screen { Browser, Tabs, Extensions, Proxy, Settings, Library, Debug, Reader, Security }
 
 @Composable
 fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
@@ -95,6 +96,7 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
     var menuOpen by remember { mutableStateOf(false) }
     var zoomOpen by remember { mutableStateOf(false) }
     var qrOpen by remember { mutableStateOf(false) }
+    var idnDismissedHost by remember { mutableStateOf<String?>(null) }
     var readerArticle by remember { mutableStateOf<ReaderArticle?>(null) }
     var urlEdit by remember { mutableStateOf(false) }
     var urlInput by remember { mutableStateOf("") }
@@ -244,6 +246,24 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
                     )
                 }
 
+                val idnRisk = IdnCheck.check(UrlUtils.hostOf(tab?.url))
+                if (idnRisk != null && idnDismissedHost != UrlUtils.hostOf(tab?.url)) {
+                    IdnBanner(
+                        host = UrlUtils.hostOf(tab?.url) ?: "",
+                        reason = idnRisk.reason,
+                        onDismiss = { idnDismissedHost = UrlUtils.hostOf(tab?.url) },
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
+                }
+
+                if ((tab?.insecureLoginFields ?: 0) > 0) {
+                    InsecureLoginBanner(
+                        fieldCount = tab?.insecureLoginFields ?: 0,
+                        onDismiss = { tab?.insecureLoginFields = 0 },
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                    )
+                }
+
                 if (findBar.active) {
                     FindBar(
                         state = findBar,
@@ -266,6 +286,16 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
                     onMenu = { menuOpen = true },
                 )
             }
+        }
+    }
+
+    // Stage B: private tabs must not appear in screenshots or the recents thumbnail.
+    LaunchedEffect(tab?.isPrivate) {
+        val window = activity.window
+        if (tab?.isPrivate == true) {
+            window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
 
@@ -371,6 +401,10 @@ fun BrowserScreen(app: DevBrowserApplication, activity: android.app.Activity) {
         )
         Screen.Reader -> ReaderScreen(
             article = readerArticle,
+            onClose = { screen = Screen.Browser },
+        )
+        Screen.Security -> SecurityCenterScreen(
+            app = app,
             onClose = { screen = Screen.Browser },
         )
         Screen.Browser -> Unit

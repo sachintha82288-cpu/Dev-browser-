@@ -8,6 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.DateFormat
 import java.util.Date
+import io.github.sachintha82288.devbrowser.util.SecureStore
 
 data class Bookmark(val url: String, val title: String, val addedAt: Long)
 
@@ -17,7 +18,11 @@ data class HistoryEntry(val url: String, val title: String, val visitedAt: Long)
  * Bookmarks + browsing history, stored as JSON in SharedPreferences. Plain and
  * dependency-free (org.json ships with Android).
  */
-class Library(private val context: Context) {
+class Library(
+    private val context: Context,
+    /** Stage B: when true, blobs are encrypted with a Keystore key. */
+    private val encryptAtRest: () -> Boolean = { false },
+) {
 
     private val prefs = context.getSharedPreferences("devbrowser_library", Context.MODE_PRIVATE)
 
@@ -102,7 +107,7 @@ class Library(private val context: Context) {
         }
 
     private fun <T> loadList(key: String, mapper: (JSONObject) -> T): List<T> = try {
-        val raw = prefs.getString(key, null) ?: return emptyList()
+        val raw = readBlob(key) ?: return emptyList()
         val array = JSONArray(raw)
         (0 until array.length()).map { mapper(array.getJSONObject(it)) }
     } catch (_: Exception) {
@@ -110,15 +115,42 @@ class Library(private val context: Context) {
     }
 
     private fun persistBookmarks() {
-        prefs.edit().putString("bookmarks", toJson(bookmarks) {
-            JSONObject().put("url", it.url).put("title", it.title).put("addedAt", it.addedAt)
-        }).apply()
+        writeBlob(
+            "bookmarks",
+            toJson(bookmarks) {
+                JSONObject().put("url", it.url).put("title", it.title).put("addedAt", it.addedAt)
+            },
+        )
     }
 
     private fun persistHistory() {
-        prefs.edit().putString("history", toJson(history) {
-            JSONObject().put("url", it.url).put("title", it.title).put("visitedAt", it.visitedAt)
-        }).apply()
+        writeBlob(
+            "history",
+            toJson(history) {
+                JSONObject().put("url", it.url).put("title", it.title).put("visitedAt", it.visitedAt)
+            },
+        )
+    }
+
+    /** Reads an encrypted blob when present, else the legacy plain value. */
+    private fun readBlob(key: String): String? {
+        val encrypted = prefs.getString("${key}_enc", null)
+        if (encrypted != null) {
+            val decrypted = SecureStore.decrypt(encrypted)
+            if (decrypted != null) return decrypted
+        }
+        return prefs.getString(key, null)
+    }
+
+    private fun writeBlob(key: String, value: String) {
+        if (encryptAtRest()) {
+            val encrypted = SecureStore.encrypt(value)
+            if (encrypted != null) {
+                prefs.edit().putString("${key}_enc", encrypted).remove(key).apply()
+                return
+            }
+        }
+        prefs.edit().putString(key, value).remove("${key}_enc").apply()
     }
 
     private fun <T> toJson(list: List<T>, block: (T) -> JSONObject): String {

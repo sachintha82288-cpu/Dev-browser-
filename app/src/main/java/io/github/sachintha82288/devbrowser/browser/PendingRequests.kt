@@ -90,6 +90,16 @@ sealed class ActivePrompt {
         val onPick: (List<android.net.Uri>) -> Unit,
     ) : ActivePrompt()
 
+    /** Stage B: the page wants to download an executable/installer file. */
+    class DangerousDownload(
+        override val tabSession: GeckoSession,
+        val fileName: String,
+        val host: String,
+        val isPackage: Boolean,
+        val onConfirm: () -> Unit,
+        val onCancel: () -> Unit,
+    ) : ActivePrompt()
+
     /** Something the page asked for that DevBrowser does not support natively. */
     class Unsupported(
         override val tabSession: GeckoSession,
