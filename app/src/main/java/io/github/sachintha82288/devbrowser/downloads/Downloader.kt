@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import io.github.sachintha82288.devbrowser.util.DownloadNames
 import org.mozilla.geckoview.WebResponse
 
 /**
@@ -60,26 +61,15 @@ object Downloader {
     }
 
     private fun fileName(response: WebResponse): String {
-        val disposition = response.headers["Content-Disposition"]
-        val fromHeader = disposition?.let { parseFilename(it) }
-        if (!fromHeader.isNullOrBlank()) return sanitize(fromHeader)
+        val fromHeader = DownloadNames.fromDisposition(response.headers["Content-Disposition"])
+        if (!fromHeader.isNullOrBlank()) return DownloadNames.sanitize(fromHeader)
         val fromUri = try {
             Uri.parse(response.uri).lastPathSegment
         } catch (_: Exception) {
             null
         }
-        if (!fromUri.isNullOrBlank()) return sanitize(fromUri)
+        if (!fromUri.isNullOrBlank()) return DownloadNames.sanitize(fromUri)
         return "devbrowser-download-${System.currentTimeMillis()}"
     }
 
-    /** Parse `attachment; filename="foo.zip"` / `filename=foo.zip`. */
-    private fun parseFilename(header: String): String? {
-        val regex = Regex("""filename\*?=(?:UTF-8''|")?([^";]+)"?""", RegexOption.IGNORE_CASE)
-        return regex.find(header)?.groupValues?.get(1)
-    }
-
-    private fun sanitize(name: String): String {
-        val cleaned = name.replace(Regex("""[\\/:*?"<>|]"""), "_").trim()
-        return if (cleaned.length > 120) cleaned.takeLast(120) else cleaned.ifBlank { "download" }
-    }
 }
