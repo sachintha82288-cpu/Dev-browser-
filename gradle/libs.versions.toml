@@ -1,13 +1,19 @@
 [versions]
-agp = "8.8.2"
-kotlin = "2.0.21"
-coreKtx = "1.15.0"
-lifecycle = "2.8.7"
-activityCompose = "1.10.1"
-composeBom = "2024.12.01"
-annotation = "1.9.1"
-coroutines = "1.10.1"
+# GeckoView 157 depends on androidx.core 1.19.0 and androidx.lifecycle 2.11.0,
+# and those AARs carry metadata that requires compileSdk 37 plus AGP 9.1 or
+# newer, so the whole toolchain has to be at least that new. AGP 9 also brings
+# built-in Kotlin support: org.jetbrains.kotlin.android is no longer applied,
+# and 2.4.20 is the Kotlin GeckoView 157 itself was built with.
+agp = "9.4.1"
+kotlin = "2.4.20"
+coreKtx = "1.19.1"
+lifecycle = "2.11.0"
+activityCompose = "1.12.4"
+composeBom = "2026.09.00"
+annotation = "1.10.0"
+coroutines = "1.11.0"
 geckoview = "157.0.20260924084938"
+junit = "4.13.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,8 +30,10 @@ androidx-compose-material-icons = { group = "androidx.compose.material", name = 
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 mozilla-geckoview = { group = "org.mozilla.geckoview", name = "geckoview-omni", version.ref = "geckoview" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+# AGP 9 compiles Kotlin itself (built-in Kotlin), so only the Compose compiler
+# plugin is applied on top of it.
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

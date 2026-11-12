@@ -1,6 +1,5 @@
 package io.github.sachintha82288.devbrowser.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,25 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Autorenew
+import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.BugReport
+import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Javascript
-import androidx.compose.material.icons.rounded.Language
-import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Restore
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Security
-import androidx.compose.material.icons.rounded.Storage
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.VpnKey
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -45,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.sachintha82288.devbrowser.DevBrowserApplication
 import io.github.sachintha82288.devbrowser.R
+import io.github.sachintha82288.devbrowser.browser.StartupPrefs
 import io.github.sachintha82288.devbrowser.data.DohMode
 import io.github.sachintha82288.devbrowser.data.SearchEngine
 import io.github.sachintha82288.devbrowser.data.TrackingProtectionLevel
@@ -66,6 +62,7 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
     var showClearConfirm by remember { mutableStateOf(false) }
 
     val clearedText = stringResource(R.string.data_cleared)
+    val failedText = stringResource(R.string.clear_data_failed)
 
     fun applyNow() {
         engine.applyRuntimeToggles()
@@ -179,7 +176,7 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                         engine.applyPrefs(ProxyPrefs.dohPrefs(settings))
                     },
                     singleLine = true,
-                    label = { Text("DoH resolver URL") },
+                    label = { Text(stringResource(R.string.doh_url_label)) },
                     textStyle = MonoTextStyle,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 )
@@ -233,6 +230,27 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                     )
                 },
             )
+            SettingRow(
+                icon = Icons.Rounded.Extension,
+                title = stringResource(R.string.allow_unsigned_extensions),
+                subtitle = stringResource(R.string.allow_unsigned_extensions_summary),
+                trailing = {
+                    Switch(
+                        checked = settings.allowUnsignedExtensions,
+                        onCheckedChange = {
+                            settings.allowUnsignedExtensions = it
+                            // User-branch prefs persist in the Gecko profile, so
+                            // switching off has to clear them rather than flip a flag.
+                            if (it) {
+                                engine.applyPrefs(StartupPrefs.extensionPrefs(settings))
+                            } else {
+                                engine.clearUserPrefs(StartupPrefs.extensionPrefsToClear(settings))
+                            }
+                            engine.writeStartupConfigNow(settings)
+                        },
+                    )
+                },
+            )
 
             HorizontalDivider()
             SectionLabel(stringResource(R.string.appearance))
@@ -249,7 +267,7 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
             )
 
             HorizontalDivider()
-            SectionLabel("About")
+            SectionLabel(stringResource(R.string.about))
 
             SettingRow(
                 icon = Icons.Rounded.Info,
@@ -348,12 +366,12 @@ fun SettingsScreen(app: DevBrowserApplication, onClose: () -> Unit) {
         AlertDialog(
             onDismissRequest = { showClearConfirm = false },
             title = { Text(stringResource(R.string.clear_browsing_data)) },
-            text = { Text("Cookies, cache, site data, permissions and sessions will be cleared.") },
+            text = { Text(stringResource(R.string.clear_data_warning)) },
             confirmButton = {
                 TextButton(onClick = {
                     showClearConfirm = false
                     engine.clearAllBrowsingData { ok ->
-                        app.tabs.showSnackbar(if (ok) clearedText else "Failed")
+                        app.tabs.showSnackbar(if (ok) clearedText else failedText)
                     }
                     app.library.clearHistory()
                 }) { Text(stringResource(R.string.ok)) }

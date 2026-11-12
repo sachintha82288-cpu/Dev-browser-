@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,9 +31,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.sachintha82288.devbrowser.DevBrowserApplication
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.browser.BrowserTab
 import io.github.sachintha82288.devbrowser.ui.components.ScreenHeader
 import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
@@ -52,21 +54,33 @@ fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
             .statusBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            val privateCount = controller.tabs.count { it.isPrivate }
             ScreenHeader(
-                title = "Tabs (${controller.tabs.size})",
+                title = stringResource(R.string.tabs_title, controller.tabs.size),
                 onBack = onClose,
                 trailing = {
-                    IconButton(onClick = {
-                        controller.closeAllTabs()
-                    }) {
-                        Icon(Icons.Rounded.DeleteSweep, contentDescription = null)
+                    if (privateCount > 0) {
+                        IconButton(onClick = { controller.closeAllTabs(privateOnly = true) }) {
+                            Icon(
+                                Icons.Rounded.VisibilityOff,
+                                contentDescription = stringResource(R.string.close_private_tabs),
+                                tint = NeonPurple,
+                            )
+                        }
+                    }
+                    IconButton(onClick = { controller.closeAllTabs() }) {
+                        Icon(
+                            Icons.Rounded.DeleteSweep,
+                            contentDescription = stringResource(R.string.close_all_tabs),
+                        )
                     }
                 },
             )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize().padding(12.dp),
+                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
+                contentPadding = PaddingValues(top = 12.dp, bottom = 96.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -105,7 +119,7 @@ fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
-                    Text("New tab", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.new_tab), style = MaterialTheme.typography.labelLarge)
                 }
             }
             Surface(
@@ -122,7 +136,7 @@ fun TabsTrayScreen(app: DevBrowserApplication, onClose: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(Icons.Rounded.VisibilityOff, contentDescription = null)
-                    Text("Private", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.private_label), style = MaterialTheme.typography.labelLarge)
                 }
             }
         }
@@ -136,6 +150,7 @@ private fun TabCard(
     onClick: () -> Unit,
     onClose: () -> Unit,
 ) {
+    val fallbackTitle = stringResource(R.string.new_tab)
     Surface(
         shape = RoundedCornerShape(14.dp),
         color = MaterialTheme.colorScheme.surfaceContainer,
@@ -160,7 +175,9 @@ private fun TabCard(
                     Spacer(modifier = Modifier.size(6.dp))
                 }
                 Text(
-                    text = tab.title.ifBlank { UrlUtils.titleFromUrl(tab.url).ifBlank { "New tab" } },
+                    text = tab.title.ifBlank {
+                        UrlUtils.titleFromUrl(tab.url).ifBlank { fallbackTitle }
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -169,14 +186,14 @@ private fun TabCard(
                 IconButton(onClick = onClose, modifier = Modifier.size(24.dp)) {
                     Icon(
                         Icons.Rounded.Close,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.close_tab),
                         modifier = Modifier.size(15.dp),
                     )
                 }
             }
             if (tab.loading) {
                 Text(
-                    text = "loading… ${tab.progress}%",
+                    text = stringResource(R.string.loading_progress, tab.progress),
                     style = MonoTextStyle,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,

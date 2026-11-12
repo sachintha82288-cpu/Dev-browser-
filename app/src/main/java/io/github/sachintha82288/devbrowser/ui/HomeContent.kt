@@ -35,9 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.sachintha82288.devbrowser.R
 import io.github.sachintha82288.devbrowser.ui.components.DevBrowserWordmark
 import io.github.sachintha82288.devbrowser.ui.theme.MonoTextStyle
 import io.github.sachintha82288.devbrowser.ui.theme.NeonPurple
@@ -90,7 +92,7 @@ fun HomeContent(
                     modifier = Modifier.size(16.dp),
                 )
                 Text(
-                    text = "Private tab",
+                    text = stringResource(R.string.private_tab),
                     style = MonoTextStyle,
                     color = NeonPurple,
                     modifier = Modifier.padding(start = 6.dp),
@@ -105,7 +107,7 @@ fun HomeContent(
             onValueChange = { input = it },
             singleLine = true,
             shape = RoundedCornerShape(14.dp),
-            placeholder = { Text("Search or enter address", style = MonoTextStyle) },
+            placeholder = { Text(stringResource(R.string.search_hint), style = MonoTextStyle) },
             leadingIcon = {
                 Icon(Icons.Rounded.Search, contentDescription = null)
             },

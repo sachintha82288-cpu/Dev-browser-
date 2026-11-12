@@ -3,6 +3,7 @@ package io.github.sachintha82288.devbrowser.downloads
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import org.mozilla.geckoview.WebResponse
@@ -34,7 +35,18 @@ object Downloader {
             request.setTitle(filename)
             request.setDescription(response.uri)
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Scoped storage: DownloadManager may write to the public Downloads dir.
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+            } else {
+                // API 26-28 would need WRITE_EXTERNAL_STORAGE for the public dir, so fall
+                // back to the app-specific Downloads folder (no permission required).
+                request.setDestinationInExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    filename,
+                )
+            }
             request.setAllowedOverMetered(true)
             request.setAllowedOverRoaming(true)
 

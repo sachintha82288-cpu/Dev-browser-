@@ -247,7 +247,10 @@ class BrowserDelegates(
         permissions: Array<out String>?,
         callback: GeckoSession.PermissionDelegate.Callback,
     ) {
-        controller.requestAndroidPermissions(permissions ?: emptyArray()) { granted ->
+        // GeckoView passes a covariant array; the ActivityResult launcher that
+        // asks the user wants a plain Array<String>.
+        val requested: List<String> = permissions?.toList() ?: emptyList()
+        controller.requestAndroidPermissions(requested.toTypedArray()) { granted ->
             if (granted) callback.grant() else callback.reject()
         }
     }

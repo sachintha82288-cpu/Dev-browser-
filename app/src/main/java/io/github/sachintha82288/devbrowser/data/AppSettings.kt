@@ -83,6 +83,17 @@ class AppSettings(context: Context) {
         get() = _aboutConfig
         set(value) { _aboutConfig = value; prefs.edit().putBoolean("about_config", value).apply() }
 
+    /**
+     * Writes `xpinstall.signatures.required=false` (and friends) into the engine
+     * startup config so self-built / unsigned .xpi files can be installed.
+     */
+    var allowUnsignedExtensions: Boolean
+        get() = _allowUnsignedExtensions
+        set(value) {
+            _allowUnsignedExtensions = value
+            prefs.edit().putBoolean("allow_unsigned_extensions", value).apply()
+        }
+
     // --- Appearance -------------------------------------------------------
 
     var amoledBlack: Boolean
@@ -130,6 +141,7 @@ class AppSettings(context: Context) {
     private var _remoteDebugging by mutableStateOf(prefs.getBoolean("remote_debugging", false))
     private var _consoleOutput by mutableStateOf(prefs.getBoolean("console_output", true))
     private var _aboutConfig by mutableStateOf(prefs.getBoolean("about_config", true))
+    private var _allowUnsignedExtensions by mutableStateOf(prefs.getBoolean("allow_unsigned_extensions", true))
 
     private var _amoledBlack by mutableStateOf(prefs.getBoolean("amoled_black", false))
 
