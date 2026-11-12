@@ -211,17 +211,13 @@ class ExtensionManager(
     // AMO link resolution
     // ------------------------------------------------------------------
 
-    private val amoPageRegex =
-        Regex("""^https?://addons\.mozilla\.org/(?:[a-zA-Z-]+/)?firefox/addon/([^/?#]+)/?""")
-
     /**
      * When the user pastes an AMO *page* URL, ask the public AMO API for the
      * actual .xpi URL (preferring the Android build of the extension).
      */
     private suspend fun resolveAmoPage(url: String): String? = withContext(Dispatchers.IO) {
-        val match = amoPageRegex.find(url) ?: return@withContext null
-        val slug = match.groupValues[1]
-        val apiUrl = "https://addons.mozilla.org/api/v5/addons/addon/$slug/?lang=en-US"
+        val slug = AmoLinks.slug(url) ?: return@withContext null
+        val apiUrl = AmoLinks.apiUrl(slug)
 
         val connection = URL(apiUrl).openConnection() as HttpURLConnection
         connection.requestMethod = "GET"

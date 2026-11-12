@@ -1,25 +1,109 @@
 package io.github.sachintha82288.devbrowser.browser
 
+import android.content.Context
 import android.util.Base64
+import androidx.annotation.StringRes
+import io.github.sachintha82288.devbrowser.R
 import org.mozilla.geckoview.WebRequestError
+import java.net.URI
 
 /**
  * Self-contained dark/neon HTML error pages, returned from
  * [org.mozilla.geckoview.GeckoSession.NavigationDelegate.onLoadError] as data: URIs.
+ *
+ * The page is rendered inside a `data:` URI, so it cannot use the app's Compose
+ * theme or its resource lookup: every string is resolved from resources here, in
+ * the app's current locale, and interpolated into the HTML. [buildHtml] itself is
+ * a pure function so it can be unit-tested on the JVM.
  */
 object ErrorPage {
 
-    fun create(uri: String?, error: WebRequestError?): String {
-        val title = describe(error)
-        val host = uri?.let {
-            try {
-                android.net.Uri.parse(it).host
-            } catch (_: Exception) {
-                null
+    fun create(context: Context, uri: String?, error: WebRequestError?): String {
+        val messageRes = messageRes(error?.code)
+        val message =
+            if (messageRes == R.string.error_page_generic) {
+                context.getString(
+                    messageRes,
+                    error?.code?.toString() ?: context.getString(R.string.error_page_unknown_code),
+                )
+            } else {
+                context.getString(messageRes)
             }
-        } ?: uri ?: ""
 
-        val html = """
+        val html = buildHtml(
+            heading = context.getString(R.string.error_page_heading),
+            host = hostOf(uri),
+            message = message,
+            hint = context.getString(R.string.page_load_error_hint),
+            retryUrl = retryUrl(uri),
+            retryLabel = context.getString(R.string.try_again),
+        )
+
+        val encoded = Base64.encodeToString(html.toByteArray(Charsets.UTF_8), Base64.NO_WRAP or Base64.URL_SAFE)
+        return "data:text/html;base64,$encoded"
+    }
+
+    /** Host to display, falling back to the raw address when there is no host part. */
+    internal fun hostOf(uri: String?): String {
+        if (uri.isNullOrBlank()) return ""
+        return try {
+            val host = URI(uri).host
+            if (host.isNullOrBlank()) uri else host
+        } catch (_: Exception) {
+            uri
+        }
+    }
+
+    /** Only plain web addresses are offered as a retry link. */
+    internal fun retryUrl(uri: String?): String? =
+        uri?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
+
+    /**
+     * String resource describing a [WebRequestError] code.
+     *
+     * The `ERROR_*` constants are compile-time ints, so this stays a pure lookup
+     * and can be asserted directly in a unit test.
+     */
+    @StringRes
+    internal fun messageRes(code: Int?): Int = when (code) {
+        WebRequestError.ERROR_SECURITY_SSL,
+        WebRequestError.ERROR_SECURITY_BAD_CERT -> R.string.error_page_ssl
+
+        WebRequestError.ERROR_NET_TIMEOUT -> R.string.error_page_timeout
+        WebRequestError.ERROR_NET_RESET -> R.string.error_page_reset
+        WebRequestError.ERROR_CONNECTION_REFUSED -> R.string.error_page_refused
+        WebRequestError.ERROR_UNKNOWN_HOST -> R.string.error_page_unknown_host
+
+        WebRequestError.ERROR_UNKNOWN_PROXY_HOST,
+        WebRequestError.ERROR_PROXY_CONNECTION_REFUSED -> R.string.error_page_proxy
+
+        WebRequestError.ERROR_REDIRECT_LOOP -> R.string.error_page_redirect_loop
+        WebRequestError.ERROR_OFFLINE -> R.string.error_page_offline
+        WebRequestError.ERROR_PORT_BLOCKED -> R.string.error_page_port_blocked
+        WebRequestError.ERROR_MALFORMED_URI -> R.string.error_page_malformed_uri
+        WebRequestError.ERROR_UNKNOWN_PROTOCOL -> R.string.error_page_unknown_protocol
+        WebRequestError.ERROR_CONTENT_CRASHED -> R.string.error_page_content_crashed
+        WebRequestError.ERROR_HTTPS_ONLY -> R.string.error_page_https_only
+
+        else -> R.string.error_page_generic
+    }
+
+    /** The page itself: no Android APIs, so a JVM test can assert on the markup. */
+    internal fun buildHtml(
+        heading: String,
+        host: String,
+        message: String,
+        hint: String,
+        retryUrl: String?,
+        retryLabel: String,
+    ): String {
+        val retry = if (retryUrl.isNullOrBlank()) {
+            ""
+        } else {
+            """<a class="retry" href="${escapeAttr(retryUrl)}">${escape(retryLabel)}</a>"""
+        }
+
+        return """
             <!DOCTYPE html>
             <html>
             <head>
@@ -41,44 +125,32 @@ object ErrorPage {
               .glyph { font-size: 40px; margin-bottom: 18px; }
               .host { color: #00e5ff; word-break: break-all; font-size: 13px; margin: 4px 0 16px; }
               p { color: #9e9eb3; font-size: 13px; line-height: 1.6; margin: 0 0 10px; }
+              .retry {
+                display: inline-block; margin-top: 14px; padding: 10px 18px;
+                border: 1px solid #ff2e63; border-radius: 10px;
+                color: #ff2e63; font-size: 13px; text-decoration: none;
+              }
               code { color: #9d4edd; }
             </style>
             </head>
             <body>
               <div class="card">
                 <div class="glyph">&lt;/&gt;</div>
-                <h1>CONNECTION_ERROR</h1>
+                <h1>${escape(heading)}</h1>
                 <div class="host">${escape(host)}</div>
-                <p>${escape(title)}</p>
-                <p>Check the address, your proxy settings or your connection, then try again.</p>
+                <p>${escape(message)}</p>
+                <p>${escape(hint)}</p>
+                $retry
               </div>
             </body>
             </html>
         """.trimIndent()
-
-        val encoded = Base64.encodeToString(html.toByteArray(Charsets.UTF_8), Base64.NO_WRAP or Base64.URL_SAFE)
-        return "data:text/html;base64,$encoded"
     }
 
-    private fun describe(error: WebRequestError?): String = when (error?.code) {
-        WebRequestError.ERROR_SECURITY_SSL,
-        WebRequestError.ERROR_SECURITY_BAD_CERT -> "The connection is not secure (TLS/certificate problem)."
-        WebRequestError.ERROR_NET_TIMEOUT -> "The connection timed out."
-        WebRequestError.ERROR_NET_RESET -> "The connection was reset while the page was loading."
-        WebRequestError.ERROR_CONNECTION_REFUSED -> "The server refused the connection."
-        WebRequestError.ERROR_UNKNOWN_HOST -> "The server could not be found (DNS)."
-        WebRequestError.ERROR_UNKNOWN_PROXY_HOST,
-        WebRequestError.ERROR_PROXY_CONNECTION_REFUSED -> "The proxy server refused the connection or could not be found."
-        WebRequestError.ERROR_REDIRECT_LOOP -> "The page is redirecting in a loop."
-        WebRequestError.ERROR_OFFLINE -> "You appear to be offline."
-        WebRequestError.ERROR_PORT_BLOCKED -> "The port is blocked for security reasons."
-        WebRequestError.ERROR_MALFORMED_URI -> "The address is not valid."
-        WebRequestError.ERROR_UNKNOWN_PROTOCOL -> "The protocol of this address is not supported."
-        WebRequestError.ERROR_CONTENT_CRASHED -> "The content process crashed while loading this page."
-        WebRequestError.ERROR_HTTPS_ONLY -> "HTTPS-only mode is on and no secure version of this site is available."
-        else -> "The page could not be loaded (error ${error?.code ?: "unknown"})."
-    }
-
-    private fun escape(s: String): String =
+    internal fun escape(s: String): String =
         s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    /** Attribute-safe escaping: the same as [escape], plus the quote characters. */
+    internal fun escapeAttr(s: String): String =
+        escape(s).replace("\"", "&quot;").replace("'", "&#39;")
 }

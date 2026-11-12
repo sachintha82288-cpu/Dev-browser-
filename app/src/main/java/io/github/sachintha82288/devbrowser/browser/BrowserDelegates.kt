@@ -91,7 +91,7 @@ class BrowserDelegates(
         uri: String?,
         error: WebRequestError,
     ): GeckoResult<String>? {
-        return GeckoResult.fromValue(ErrorPage.create(uri, error))
+        return GeckoResult.fromValue(ErrorPage.create(controller.appContext, uri, error))
     }
 
     // ---------------------------------------------------------------------

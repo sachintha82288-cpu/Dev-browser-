@@ -131,6 +131,22 @@
     <!-- Error page -->
     <string name="page_load_error">සම්බන්ධ විය නොහැක</string>
     <string name="page_load_error_hint">ලිපිනය, ප්‍රොක්සි සැකසුම් හෝ සම්බන්ධතාවය පරීක්ෂා කරලා නැවත උත්සාහ කරන්න.</string>
+    <string name="error_page_heading">සම්බන්ධතා දෝෂයක්</string>
+    <string name="error_page_ssl">සම්බන්ධතාවය ආරක්ෂිත නැහැ (TLS හෝ සහතික ගැටලුවක්).</string>
+    <string name="error_page_timeout">සම්බන්ධතාවයට නියමිත වේලාව ඉකුත් වුණා.</string>
+    <string name="error_page_reset">පිටුව පූරණය වන අතරතුර සම්බන්ධතාවය බිඳ වැටුණා.</string>
+    <string name="error_page_refused">සේවාදායකය සම්බන්ධතාවය ප්‍රතික්ෂේප කළා.</string>
+    <string name="error_page_unknown_host">සේවාදායකය සොයා ගන්න බැරි වුණා (DNS).</string>
+    <string name="error_page_proxy">ප්‍රොක්සි සේවාදායකය සම්බන්ධතාවය ප්‍රතික්ෂේප කළා, නැත්නම් එය සොයා ගන්න බැරි වුණා.</string>
+    <string name="error_page_redirect_loop">පිටුව ලූපයක් ලෙස නැවත නැවත යොමු වෙනවා.</string>
+    <string name="error_page_offline">ඔබට දැන් අන්තර්ජාල සම්බන්ධතාවයක් නැති බව පෙනේ.</string>
+    <string name="error_page_port_blocked">ආරක්ෂක හේතූන් නිසා මේ පෝට් එක අවහිර කරලා තියෙනවා.</string>
+    <string name="error_page_malformed_uri">ලිපිනය වලංගු නැහැ.</string>
+    <string name="error_page_unknown_protocol">මේ ලිපිනයේ ප්‍රොටොකෝලයට සහාය දක්වන්නේ නැහැ.</string>
+    <string name="error_page_content_crashed">පිටුව පූරණය වන අතරතුර content ක්‍රියාවලිය crash වුණා.</string>
+    <string name="error_page_https_only">HTTPS-only ප්‍රකාරය ක්‍රියාත්මකයි, මේ අඩවියේ ආරක්ෂිත අනුවාදයක් නැහැ.</string>
+    <string name="error_page_generic">පිටුව පූරණය කරන්න බැරි වුණා (දෝෂය %1$s).</string>
+    <string name="error_page_unknown_code">නොදන්නා</string>
     <string name="try_again">නැවත උත්සාහ කරන්න</string>
 
     <!-- Misc -->
